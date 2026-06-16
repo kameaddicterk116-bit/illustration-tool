@@ -96,8 +96,8 @@
 
   <label>スタイル</label>
   <div class="style-group">
-    <label><input type="radio" name="style" value="ultra simple black outline only, circle head, dot eyes, characteristic features only, white background, minimalist, recognizable by shape alone" checked> シンプル線画</label>
-    <label><input type="radio" name="style" value="ultra simple, circle head, dot eyes, one flat color, characteristic shape only, white background, minimalist cute"> 1色ぬり</label>
+    <label><input type="radio" name="style" value="simple vector line art, black outline, thick lines, no shading, minimal detail, white background, flat, simple icon style" checked> シンプル線画</label>
+    <label><input type="radio" name="style" value="flat vector art, simple solid colors, no gradients, minimal detail, bold outlines, white background, kawaii sticker style"> 1色ぬり</label>
   </div>
 
   <button id="btn">イラストを生成</button>
@@ -106,7 +106,6 @@
 </div>
 
 <script>
-// 特徴的なパーツを補足するマッピング
 const featureMap = {
   "キツネ": "fox with pointed ears and bushy tail",
   "パンダ": "panda with black eye patches and round ears",
@@ -137,7 +136,6 @@ document.getElementById('btn').addEventListener('click', () => {
     return;
   }
 
-  // 特徴マッピングがあれば使い、なければそのまま英語で送る
   const subject = featureMap[subjectRaw] || subjectRaw;
   const prompt = encodeURIComponent(`${subject}, ${style}`);
   const seed = Math.floor(Math.random() * 100000);
