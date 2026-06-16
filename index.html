@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>もっとシンプルに！らくがきツール</title>
+<title>キャラ風シンプル似顔絵ツール</title>
 <style>
   body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
   .card { width: 100%; max-width: 400px; text-align: center; }
@@ -14,9 +14,9 @@
 </head>
 <body>
 <div class="card">
-  <h3>だれをかく？</h3>
-  <input type="text" id="subject" placeholder="特徴を教えて（例：メガネの30代男性）">
-  <button id="btn">らくがき生成！</button>
+  <h3>キャラクター似顔絵</h3>
+  <input type="text" id="subject" placeholder="特徴（例：丸メガネの男の子）">
+  <button id="btn">生成する！</button>
   <div id="result"></div>
 </div>
 
@@ -25,9 +25,8 @@ document.getElementById('btn').addEventListener('click', () => {
   const sub = document.getElementById('subject').value;
   const result = document.getElementById('result');
   
-  // プロンプトを「究極の幼児画」に調整
-  // "toddler drawing", "very few lines", "crayon", "symbolic" を強調
-  const prompt = encodeURIComponent(`${sub}, full body, toddler drawing, crayon on paper, extremely simple, very few lines, stick figure style, symbolic, minimalist, white background, no complex details, child art`);
+  // 「ちいかわやドラえもん」のような「丸い頭」「シンプルな構成」を強調するプロンプト
+  const prompt = encodeURIComponent(`${sub}, full body, character design, rounded head, big eyes, simple iconic shape, minimalist style, thick clean black outlines, flat solid colors, white background, mascot style, cute and easy to draw`);
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
   result.innerHTML = "かいてるよ…";
