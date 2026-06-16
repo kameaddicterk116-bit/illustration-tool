@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>イラスト生成ツール</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Hiragino Sans", sans-serif;
+    background: #f5f5f7;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    height: fit-content;
+  }
+  h1 { font-size: 1.3rem; margin-bottom: 4px; }
+  p.sub { color: #888; font-size: 0.85rem; margin-bottom: 20px; }
+  label { display: block; font-size: 0.85rem; color: #555; margin-bottom: 6px; }
+  input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+  .style-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .style-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: #333;
+    cursor: pointer;
+  }
+  button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    background: #000;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.4; }
+  .status {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 12px;
+    min-height: 1.2em;
+  }
+  .result { margin-top: 16px; }
+  .result img {
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+  }
+  .download {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #000;
+    text-decoration: none;
+    border: 1px solid #000;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>イラスト生成ツール</h1>
+  <p class="sub">名前を入力してイラストを生成します</p>
+
+  <label>名前（動物・キャラクターなど）</label>
+  <input type="text" id="subject" placeholder="例: キツネ、パンダ、ロボット" />
+
+  <label>スタイル</label>
+  <div class="style-group">
+    <label><input type="radio" name="style" value="extremely simple line drawing, only basic shapes like circles and triangles, white background, black lines only, 5 lines or less, like a drawing song illustration" checked> 線だけ（モノクロ）</label>
+    <label><input type="radio" name="style" value="extremely simple drawing, basic circle and line shapes, white background, 3 colors only, flat fill, like a children's drawing song"> 3色ぬり絵</label>
+    <label><input type="radio" name="style" value="ultra simple cute character, round circle head, dot eyes, minimal features, white background, single outline, pastel color"> まるまるキャラ</label>
+    <label><input type="radio" name="style" value="simple icon style, geometric basic shapes only, bold single color, white background, no details, pictogram style"> アイコン風</label>
+  </div>
+
+  <button id="btn">イラストを生成</button>
+  <div class="status" id="status"></div>
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+document.getElementById('btn').addEventListener('click', () => {
+  const subject = document.getElementById('subject').value.trim();
+  const style = document.querySelector('input[name="style"]:checked').value;
+  const btn = document.getElementById('btn');
+  const status = document.getElementById('status');
+  const result = document.getElementById('result');
+
+  if (!subject) {
+    status.textContent = '名前を入力してください';
+    return;
+  }
+
+  const prompt = encodeURIComponent(`An illustration of ${subject}, ${style}`);
+  const seed = Math.floor(Math.random() * 100000);
+  const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&seed=${seed}&nologo=true`;
+
+  btn.disabled = true;
+  status.textContent = '生成中…（20〜40秒かかります）';
+  result.innerHTML = '';
+
+  const img = new Image();
+  img.onload = () => {
+    result.innerHTML = `
+      <img src="${url}" alt="${subject}のイラスト">
+      <a class="download" href="${url}" download="${subject}.png" target="_blank">画像をダウンロード</a>
+    `;
+    status.textContent = '生成が完了しました';
+    btn.disabled = false;
+  };
+  img.onerror = () => {
+    status.textContent = 'エラー: Pollinations.aiに接続できません。しばらく待ってから再試行してください。';
+    btn.disabled = false;
+  };
+  img.src = url;
+});
+</script>
+</body>
+</html>
