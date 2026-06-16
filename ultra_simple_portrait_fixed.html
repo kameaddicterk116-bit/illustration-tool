@@ -1,0 +1,14 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><title>Ultra Simple Portrait</title><body style="font-family:sans-serif;max-width:420px;margin:40px auto">
+<h2>超シンプル似顔絵</h2>
+<input id=s placeholder="人物名や特徴" style="width:100%;padding:12px"><br><br>
+<button onclick="go()">生成</button><p id=t></p><div id=r></div>
+<script>
+function go(){
+let v=s.value.trim();
+if(!v){t.textContent='入力してください';return}
+let prompt=encodeURIComponent(v+', extreme minimalist portrait, preserve identity, few lines only, silhouette hair face ratio, white background');
+let url='https://image.pollinations.ai/prompt/'+prompt+'?width=512&height=512&nologo=true';
+t.textContent='生成中…';
+r.innerHTML='<img src="'+url+'" style="width:100%">';
+}
+</script></body></html>
