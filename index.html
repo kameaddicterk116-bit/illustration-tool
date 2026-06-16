@@ -2,20 +2,20 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>キャラ風シンプル似顔絵ツール</title>
+<title>究極のシンプル・アイコン生成</title>
 <style>
   body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
   .card { width: 100%; max-width: 400px; text-align: center; }
-  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 4px solid #000; border-radius: 20px; box-sizing: border-box; font-size: 1.1rem; }
-  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
+  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 4px solid #000; border-radius: 24px; box-sizing: border-box; font-size: 1.1rem; }
+  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 24px; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
   #result { margin-top: 20px; }
-  img { width: 100%; border: 4px solid #000; border-radius: 20px; }
+  img { width: 100%; border: 4px solid #000; border-radius: 24px; }
 </style>
 </head>
 <body>
 <div class="card">
-  <h3>キャラクター似顔絵</h3>
-  <input type="text" id="subject" placeholder="特徴（例：丸メガネの男の子）">
+  <h3>オリジナルアイコン生成</h3>
+  <input type="text" id="subject" placeholder="特徴を教えて（例：丸メガネの男の子）">
   <button id="btn">生成する！</button>
   <div id="result"></div>
 </div>
@@ -25,8 +25,9 @@ document.getElementById('btn').addEventListener('click', () => {
   const sub = document.getElementById('subject').value;
   const result = document.getElementById('result');
   
-  // 「ちいかわやドラえもん」のような「丸い頭」「シンプルな構成」を強調するプロンプト
-  const prompt = encodeURIComponent(`${sub}, full body, character design, rounded head, big eyes, simple iconic shape, minimalist style, thick clean black outlines, flat solid colors, white background, mascot style, cute and easy to draw`);
+  // プロンプトを「図形的なアイコンデザイン」に極振りしました
+  // 「円」「太い線」「フラットな色」のみで構成させ、人間らしさを記号に置き換えます
+  const prompt = encodeURIComponent(`${sub}, minimalist mascot logo, flat vector art, extremely simple, geometric shapes, bold clean black lines, one or two colors, white background, no shading, high contrast, unique shape, easy to draw`);
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
   result.innerHTML = "かいてるよ…";
