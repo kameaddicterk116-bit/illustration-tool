@@ -2,21 +2,21 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>究極のシンプル・アイコン生成</title>
+<title>究極のシンプル生成</title>
 <style>
   body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
   .card { width: 100%; max-width: 400px; text-align: center; }
-  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 4px solid #000; border-radius: 24px; box-sizing: border-box; font-size: 1.1rem; }
-  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 24px; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
+  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 4px solid #000; border-radius: 12px; box-sizing: border-box; font-size: 1.1rem; }
+  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
   #result { margin-top: 20px; }
-  img { width: 100%; border: 4px solid #000; border-radius: 24px; }
+  img { width: 100%; border: 4px solid #000; border-radius: 12px; }
 </style>
 </head>
 <body>
 <div class="card">
-  <h3>オリジナルアイコン生成</h3>
-  <input type="text" id="subject" placeholder="特徴を教えて（例：丸メガネの男の子）">
-  <button id="btn">生成する！</button>
+  <h3>名前や特徴を入れてね</h3>
+  <input type="text" id="subject" placeholder="例：メガネ, ぼうし, ネクタイ">
+  <button id="btn">シンプル生成</button>
   <div id="result"></div>
 </div>
 
@@ -25,9 +25,9 @@ document.getElementById('btn').addEventListener('click', () => {
   const sub = document.getElementById('subject').value;
   const result = document.getElementById('result');
   
-  // プロンプトを「図形的なアイコンデザイン」に極振りしました
-  // 「円」「太い線」「フラットな色」のみで構成させ、人間らしさを記号に置き換えます
-  const prompt = encodeURIComponent(`${sub}, minimalist mascot logo, flat vector art, extremely simple, geometric shapes, bold clean black lines, one or two colors, white background, no shading, high contrast, unique shape, easy to draw`);
+  // 徹底的に情報を削ぎ落とすプロンプト
+  // 影なし、色なし、線だけ、というルールを課しました
+  const prompt = encodeURIComponent(`${sub}, line art icon, black and white, only lines, no fill, no shading, minimal vector, extremely simple, geometric, icon, white background`);
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
   result.innerHTML = "かいてるよ…";
