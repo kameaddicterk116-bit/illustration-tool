@@ -2,21 +2,21 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>シンプル似顔絵ツール</title>
+<title>もっとシンプルに！らくがきツール</title>
 <style>
   body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
   .card { width: 100%; max-width: 400px; text-align: center; }
-  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 3px solid #000; border-radius: 12px; box-sizing: border-box; font-size: 1.1rem; }
-  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
+  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 4px solid #000; border-radius: 20px; box-sizing: border-box; font-size: 1.1rem; }
+  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
   #result { margin-top: 20px; }
-  img { width: 100%; border: 3px solid #000; border-radius: 12px; }
+  img { width: 100%; border: 4px solid #000; border-radius: 20px; }
 </style>
 </head>
 <body>
 <div class="card">
   <h3>だれをかく？</h3>
-  <input type="text" id="subject" placeholder="特徴をくわしく書いてね（例：メガネをかけた30代の男性）">
-  <button id="btn">えをかく！</button>
+  <input type="text" id="subject" placeholder="特徴を教えて（例：メガネの30代男性）">
+  <button id="btn">らくがき生成！</button>
   <div id="result"></div>
 </div>
 
@@ -25,8 +25,9 @@ document.getElementById('btn').addEventListener('click', () => {
   const sub = document.getElementById('subject').value;
   const result = document.getElementById('result');
   
-  // 「本人」を認識させるため、入力された内容を「単純な図形」で描くよう強烈に制限します
-  const prompt = encodeURIComponent(`${sub}, full body, minimalist toddler drawing, simple stick figure, thick black marker lines, white background, no shading, basic geometric shapes only, iconic style`);
+  // プロンプトを「究極の幼児画」に調整
+  // "toddler drawing", "very few lines", "crayon", "symbolic" を強調
+  const prompt = encodeURIComponent(`${sub}, full body, toddler drawing, crayon on paper, extremely simple, very few lines, stick figure style, symbolic, minimalist, white background, no complex details, child art`);
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
   result.innerHTML = "かいてるよ…";
