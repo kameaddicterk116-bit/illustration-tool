@@ -2,21 +2,21 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>究極のシンプル生成</title>
+<title>超シンプル線画生成</title>
 <style>
   body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
   .card { width: 100%; max-width: 400px; text-align: center; }
-  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 4px solid #000; border-radius: 12px; box-sizing: border-box; font-size: 1.1rem; }
-  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
+  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 5px solid #000; border-radius: 8px; font-size: 1.2rem; box-sizing: border-box; }
+  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
   #result { margin-top: 20px; }
-  img { width: 100%; border: 4px solid #000; border-radius: 12px; }
+  img { width: 100%; border: 5px solid #000; background: #fff; }
 </style>
 </head>
 <body>
 <div class="card">
-  <h3>名前や特徴を入れてね</h3>
-  <input type="text" id="subject" placeholder="例：メガネ, ぼうし, ネクタイ">
-  <button id="btn">シンプル生成</button>
+  <h3>特徴を書いてね</h3>
+  <input type="text" id="subject" placeholder="例：めがね, ぼうし">
+  <button id="btn">生成する</button>
   <div id="result"></div>
 </div>
 
@@ -25,14 +25,15 @@ document.getElementById('btn').addEventListener('click', () => {
   const sub = document.getElementById('subject').value;
   const result = document.getElementById('result');
   
-  // 徹底的に情報を削ぎ落とすプロンプト
-  // 影なし、色なし、線だけ、というルールを課しました
-  const prompt = encodeURIComponent(`${sub}, line art icon, black and white, only lines, no fill, no shading, minimal vector, extremely simple, geometric, icon, white background`);
+  // 究極の制限プロンプト
+  // 「数本の線」「ドット」「単純な幾何学」のみに限定
+  const prompt = encodeURIComponent(`${sub}, simple line icon, minimalist, only 5 black lines, basic geometric shapes, dots, no details, white background, extreme simplicity, raw sketch`);
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
   result.innerHTML = "かいてるよ…";
   const img = new Image();
   img.onload = () => result.innerHTML = `<img src="${url}">`;
+  img.onerror = () => result.innerHTML = "エラーが発生しました";
   img.src = url;
 });
 </script>
