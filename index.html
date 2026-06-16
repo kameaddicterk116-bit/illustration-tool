@@ -2,22 +2,22 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>オリジナル全身シンプル生成</title>
+<title>子供でも描ける！シンプルイラスト生成</title>
 <style>
-  body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fafafa; }
-  .card { width: 100%; max-width: 400px; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-  input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-  #result { margin-top: 20px; text-align: center; }
-  img { width: 100%; border-radius: 6px; background: #fff; }
+  body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
+  .card { width: 100%; max-width: 400px; text-align: center; }
+  input { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid #000; border-radius: 12px; box-sizing: border-box; font-size: 1rem; }
+  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: bold; }
+  #result { margin-top: 20px; }
+  img { width: 100%; border: 2px solid #000; border-radius: 12px; }
 </style>
 </head>
 <body>
 <div class="card">
-  <h3>全身オリジナルアイコン生成</h3>
-  <input type="text" id="subject" placeholder="誰？（例: 20代男性、働く女性）">
-  <input type="text" id="features" placeholder="特徴（例: 黒のスーツ、メガネ、赤いスニーカー）">
-  <button id="btn">全身イラストを生成</button>
+  <h3>お絵かきツール</h3>
+  <input type="text" id="subject" placeholder="なにを描く？（例：お母さん）">
+  <input type="text" id="features" placeholder="特徴は？（例：メガネ、帽子）">
+  <button id="btn">生成する！</button>
   <div id="result"></div>
 </div>
 
@@ -27,15 +27,14 @@ document.getElementById('btn').addEventListener('click', () => {
   const feat = document.getElementById('features').value;
   const result = document.getElementById('result');
   
-  // 究極のシンプルさを出すプロンプト：
-  // "full body", "flat vector", "minimalist icon" を強調することで全身かつ記号的な絵にします
-  const prompt = encodeURIComponent(`full body ${sub}, ${feat}, minimalist vector icon, thick black outline, flat solid colors, no shading, white background, simple shape, clean design`);
+  // プロンプトを「子供の絵」に特化させました
+  // "child's drawing", "simple crayon lines", "stick figure" を指定しています
+  const prompt = encodeURIComponent(`full body ${sub}, ${feat}, child's drawing, simple stick figure, crayon style, thick black outlines, white background, very simple, minimal details, recognizable by shape`);
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
-  result.innerHTML = "生成中…（全身を描画しています）";
+  result.innerHTML = "かいているよ…";
   const img = new Image();
   img.onload = () => result.innerHTML = `<img src="${url}">`;
-  img.onerror = () => result.innerHTML = "生成エラーが発生しました。もう一度試してください。";
   img.src = url;
 });
 </script>
