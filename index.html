@@ -2,23 +2,22 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>究極のシンプル生成</title>
+<title>オリジナル全身シンプル生成</title>
 <style>
-  body { font-family: sans-serif; background: #fff; display: flex; justify-content: center; padding: 20px; }
-  .card { width: 100%; max-width: 400px; }
-  input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #000; border-radius: 0; }
-  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; cursor: pointer; }
-  #result { margin-top: 20px; }
-  img { width: 100%; border: 1px solid #000; }
+  body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fafafa; }
+  .card { width: 100%; max-width: 400px; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+  input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  #result { margin-top: 20px; text-align: center; }
+  img { width: 100%; border-radius: 6px; background: #fff; }
 </style>
 </head>
 <body>
 <div class="card">
-  <h3>誰の似顔絵を作りますか？</h3>
-  <input type="text" id="subject" placeholder="例: 男性、女性、メガネの先生">
-  <input type="text" id="features" placeholder="髪型や特徴（例: ショートヘア, 笑顔）">
-  <button id="btn">生成する</button>
+  <h3>全身オリジナルアイコン生成</h3>
+  <input type="text" id="subject" placeholder="誰？（例: 20代男性、働く女性）">
+  <input type="text" id="features" placeholder="特徴（例: 黒のスーツ、メガネ、赤いスニーカー）">
+  <button id="btn">全身イラストを生成</button>
   <div id="result"></div>
 </div>
 
@@ -28,13 +27,15 @@ document.getElementById('btn').addEventListener('click', () => {
   const feat = document.getElementById('features').value;
   const result = document.getElementById('result');
   
-  // 究極にシンプルな構成にするための呪文（プロンプト）
-  const prompt = encodeURIComponent(`${sub}, ${feat}, minimalist vector icon, thick black lines, white background, simple flat style`);
-  const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.random()}`;
+  // 究極のシンプルさを出すプロンプト：
+  // "full body", "flat vector", "minimalist icon" を強調することで全身かつ記号的な絵にします
+  const prompt = encodeURIComponent(`full body ${sub}, ${feat}, minimalist vector icon, thick black outline, flat solid colors, no shading, white background, simple shape, clean design`);
+  const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
-  result.innerHTML = "生成中...";
+  result.innerHTML = "生成中…（全身を描画しています）";
   const img = new Image();
   img.onload = () => result.innerHTML = `<img src="${url}">`;
+  img.onerror = () => result.innerHTML = "生成エラーが発生しました。もう一度試してください。";
   img.src = url;
 });
 </script>
