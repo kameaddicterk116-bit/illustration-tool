@@ -2,22 +2,22 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>子供でも描ける！シンプルイラスト生成</title>
+<title>じぶんのらくがきツール</title>
 <style>
   body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
   .card { width: 100%; max-width: 400px; text-align: center; }
-  input { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid #000; border-radius: 12px; box-sizing: border-box; font-size: 1rem; }
-  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: bold; }
+  input { width: 100%; padding: 12px; margin-bottom: 10px; border: 3px solid #000; border-radius: 16px; box-sizing: border-box; font-size: 1rem; }
+  button { width: 100%; padding: 15px; background: #ff4757; color: #fff; border: none; border-radius: 16px; cursor: pointer; font-size: 1.1rem; font-weight: bold; }
   #result { margin-top: 20px; }
-  img { width: 100%; border: 2px solid #000; border-radius: 12px; }
+  img { width: 100%; border: 3px solid #000; border-radius: 16px; background: #fff; }
 </style>
 </head>
 <body>
 <div class="card">
-  <h3>お絵かきツール</h3>
-  <input type="text" id="subject" placeholder="なにを描く？（例：お母さん）">
-  <input type="text" id="features" placeholder="特徴は？（例：メガネ、帽子）">
-  <button id="btn">生成する！</button>
+  <h3>だれかな？かいてみて</h3>
+  <input type="text" id="subject" placeholder="だれ？（例：おとうさん）">
+  <input type="text" id="features" placeholder="とくちょう（例：めがね, ぼうし）">
+  <button id="btn">えをかく！</button>
   <div id="result"></div>
 </div>
 
@@ -27,12 +27,12 @@ document.getElementById('btn').addEventListener('click', () => {
   const feat = document.getElementById('features').value;
   const result = document.getElementById('result');
   
-  // プロンプトを「子供の絵」に特化させました
-  // "child's drawing", "simple crayon lines", "stick figure" を指定しています
-  const prompt = encodeURIComponent(`full body ${sub}, ${feat}, child's drawing, simple stick figure, crayon style, thick black outlines, white background, very simple, minimal details, recognizable by shape`);
+  // 幼児が描くような「記号的」な絵を目指したプロンプト
+  // 「シンプルすぎる図形」「太い線」「色塗りなし」を強調
+  const prompt = encodeURIComponent(`full body ${sub}, ${feat}, toddler drawing style, crayon on paper, very simple stick figure, big head small body, recognizable features, basic shapes, thick lines, no shading, white background`);
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
-  result.innerHTML = "かいているよ…";
+  result.innerHTML = "かいてるよ…";
   const img = new Image();
   img.onload = () => result.innerHTML = `<img src="${url}">`;
   img.src = url;
