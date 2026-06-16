@@ -2,21 +2,21 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>超シンプル線画メーカー</title>
+<title>究極のシンプル記号生成</title>
 <style>
   body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
   .card { width: 100%; max-width: 400px; text-align: center; }
   input { width: 100%; padding: 15px; margin-bottom: 15px; border: 4px solid #000; border-radius: 12px; box-sizing: border-box; font-size: 1.1rem; }
-  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1rem; font-weight: bold; }
+  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
   #result { margin-top: 20px; }
-  img { width: 100%; border: 4px solid #000; border-radius: 12px; background: white; }
+  img { width: 100%; border: 4px solid #000; border-radius: 12px; }
 </style>
 </head>
 <body>
 <div class="card">
-  <h3>だれをかく？</h3>
-  <input type="text" id="subject" placeholder="特徴をひとつだけ（例：丸メガネ）">
-  <button id="btn">線画を生成</button>
+  <h3>だれの特徴？（例：めがねの男の子）</h3>
+  <input type="text" id="subject" placeholder="特徴を入力">
+  <button id="btn">生成</button>
   <div id="result"></div>
 </div>
 
@@ -25,9 +25,8 @@ document.getElementById('btn').addEventListener('click', () => {
   const sub = document.getElementById('subject').value;
   const result = document.getElementById('result');
   
-  // 描き込みを禁止する強力な呪文（プロンプト）
-  // 塗りつぶし禁止、影禁止、線のみ、を徹底指示
-  const prompt = encodeURIComponent(`${sub}, simple black and white line art, professional vector icon, clean lines, no shading, no colors, no fills, white background, minimalist design, easy to copy`);
+  // AIを「絵描き」ではなく「アイコンデザイナー」として強制定義するプロンプト
+  const prompt = encodeURIComponent(`${sub}, simple character icon, circular head, minimalist style, thick black vector outline, no colors, no shading, white background, flat, high contrast, symbol, easy to draw, 2D design`);
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
   result.innerHTML = "かいてるよ…";
