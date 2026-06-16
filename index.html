@@ -2,22 +2,23 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>じぶんのらくがきツール</title>
+<title>本人そっくり！シンプルらくがき生成</title>
 <style>
   body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
   .card { width: 100%; max-width: 400px; text-align: center; }
-  input { width: 100%; padding: 12px; margin-bottom: 10px; border: 3px solid #000; border-radius: 16px; box-sizing: border-box; font-size: 1rem; }
-  button { width: 100%; padding: 15px; background: #ff4757; color: #fff; border: none; border-radius: 16px; cursor: pointer; font-size: 1.1rem; font-weight: bold; }
+  input { width: 100%; padding: 12px; margin-bottom: 10px; border: 3px solid #000; border-radius: 12px; box-sizing: border-box; }
+  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
   #result { margin-top: 20px; }
-  img { width: 100%; border: 3px solid #000; border-radius: 16px; background: #fff; }
+  img { width: 100%; border: 3px solid #000; border-radius: 12px; }
 </style>
 </head>
 <body>
 <div class="card">
-  <h3>だれかな？かいてみて</h3>
-  <input type="text" id="subject" placeholder="だれ？（例：おとうさん）">
-  <input type="text" id="features" placeholder="とくちょう（例：めがね, ぼうし）">
-  <button id="btn">えをかく！</button>
+  <h3>本人の特徴を教えて！</h3>
+  <input type="text" id="subject" placeholder="性別と年代（例：30代男性）">
+  <input type="text" id="features" placeholder="髪型と顔の特徴（例：丸顔, 短い黒髪, 太いメガネ）">
+  <input type="text" id="clothes" placeholder="服装（例：青いTシャツとジーンズ）">
+  <button id="btn">生成する</button>
   <div id="result"></div>
 </div>
 
@@ -25,14 +26,15 @@
 document.getElementById('btn').addEventListener('click', () => {
   const sub = document.getElementById('subject').value;
   const feat = document.getElementById('features').value;
+  const cloth = document.getElementById('clothes').value;
   const result = document.getElementById('result');
   
-  // 幼児が描くような「記号的」な絵を目指したプロンプト
-  // 「シンプルすぎる図形」「太い線」「色塗りなし」を強調
-  const prompt = encodeURIComponent(`full body ${sub}, ${feat}, toddler drawing style, crayon on paper, very simple stick figure, big head small body, recognizable features, basic shapes, thick lines, no shading, white background`);
+  // 本人に似せるためのプロンプト構造を強化
+  // "clear facial features" と "focus on" を追加して特徴を強調
+  const prompt = encodeURIComponent(`full body portrait of ${sub}, focus on ${feat}, wearing ${cloth}, child's drawing style, simple lines, flat colors, white background, distinct recognizable characteristics, minimalist`);
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
-  result.innerHTML = "かいてるよ…";
+  result.innerHTML = "生成中…（特徴を反映しています）";
   const img = new Image();
   img.onload = () => result.innerHTML = `<img src="${url}">`;
   img.src = url;
