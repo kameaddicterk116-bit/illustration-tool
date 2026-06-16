@@ -2,20 +2,21 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>超シンプル線画生成</title>
+<title>究極の低解像度・シンプル生成</title>
 <style>
   body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
   .card { width: 100%; max-width: 400px; text-align: center; }
-  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 5px solid #000; border-radius: 8px; font-size: 1.2rem; box-sizing: border-box; }
-  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
+  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 4px solid #000; border-radius: 12px; box-sizing: border-box; font-size: 1.1rem; }
+  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
   #result { margin-top: 20px; }
-  img { width: 100%; border: 5px solid #000; background: #fff; }
+  /* あえて解像度を落とした画像を無理やり引き伸ばすことで、詳細を消します */
+  img { width: 100%; image-rendering: pixelated; border: 4px solid #000; border-radius: 12px; }
 </style>
 </head>
 <body>
 <div class="card">
-  <h3>特徴を書いてね</h3>
-  <input type="text" id="subject" placeholder="例：めがね, ぼうし">
+  <h3>名前や特徴をどうぞ</h3>
+  <input type="text" id="subject" placeholder="例：メガネの男の子">
   <button id="btn">生成する</button>
   <div id="result"></div>
 </div>
@@ -25,15 +26,13 @@ document.getElementById('btn').addEventListener('click', () => {
   const sub = document.getElementById('subject').value;
   const result = document.getElementById('result');
   
-  // 究極の制限プロンプト
-  // 「数本の線」「ドット」「単純な幾何学」のみに限定
-  const prompt = encodeURIComponent(`${sub}, simple line icon, minimalist, only 5 black lines, basic geometric shapes, dots, no details, white background, extreme simplicity, raw sketch`);
-  const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
+  // 重要な点: width=64&height=64 に設定して、AIに細かい描写を物理的に不可能にします
+  const prompt = encodeURIComponent(`${sub}, simple icon, minimalist, flat colors`);
+  const url = `https://image.pollinations.ai/prompt/${prompt}?width=64&height=64&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
   
   result.innerHTML = "かいてるよ…";
   const img = new Image();
   img.onload = () => result.innerHTML = `<img src="${url}">`;
-  img.onerror = () => result.innerHTML = "エラーが発生しました";
   img.src = url;
 });
 </script>
