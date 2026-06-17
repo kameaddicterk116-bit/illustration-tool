@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>かんたん記号イラスト</title>
+<title>特徴だけ描く</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{
@@ -14,11 +14,11 @@ display:flex;
 justify-content:center;
 }
 .card{
-background:white;
-padding:24px;
 width:100%;
-max-width:420px;
-border-radius:18px;
+max-width:460px;
+background:#fff;
+padding:24px;
+border-radius:20px;
 }
 h1{
 margin-bottom:8px;
@@ -33,15 +33,16 @@ padding:14px;
 font-size:18px;
 border:1px solid #ddd;
 border-radius:12px;
-margin-bottom:14px;
 }
 button{
+margin-top:14px;
 width:100%;
 padding:14px;
+border:none;
 background:black;
 color:white;
-border:none;
 border-radius:12px;
+font-size:16px;
 }
 #canvas{
 margin-top:20px;
@@ -52,134 +53,190 @@ svg{
 width:280px;
 height:280px;
 }
+.info{
+margin-top:12px;
+color:#666;
+font-size:14px;
+text-align:center;
+}
 .download{
 display:block;
 margin-top:14px;
-padding:12px;
 text-align:center;
+padding:12px;
 border:1px solid black;
+border-radius:10px;
 text-decoration:none;
 color:black;
-border-radius:10px;
-}
-.small{
-font-size:13px;
-color:#777;
-margin-top:8px;
-text-align:center;
 }
 </style>
 </head>
 <body>
 <div class="card">
-<h1>かんたん記号イラスト</h1>
+<h1>特徴だけ描く</h1>
 <div class="sub">
-特徴だけ残して描く
+AIで特徴を減らして描く
 </div>
 <input
 id="subject"
-placeholder="ネコ、消防士、キリン、掃除機">
-<button id="drawBtn">
+placeholder="ネコ、消防士、掃除機、キリン">
+<button
+id="generate">
 描く
 </button>
-<div id="canvas"></div>
-<div id="save"></div>
 <div
-class="small"
-id="hint">
+class="info"
+id="info">
+</div>
+<div
+id="canvas">
+</div>
+<div
+id="save">
 </div>
 </div>
 <script>
-const rules=[
-{
-match:
-/ネコ|猫|キツネ|クマ|パンダ|イヌ|犬|動物/,
-parts:
-["face","ears"]
-},
-{
-match:
-/ゾウ|キリン|恐竜/,
-parts:
-["face","long"]
-},
-{
-match:
-/消防|宇宙|医者|料理|人/,
-parts:
-["face","hat"]
-},
-{
-match:
-/車|電車|飛行機/,
-parts:
-["box","wheel"]
-}
-];
-function detect(name){
-for(
-const r
-of rules
-){
+async function extractFeatures(name){
+const text=name.toLowerCase();
 if(
-r.match
-.test(name)
+/猫|ネコ|cat/
+.test(text)
 ){
-return r.parts;
+return[
+"ears",
+"whiskers"
+];
 }
+if(
+/犬|イヌ|dog/
+.test(text)
+){
+return[
+"ears",
+"tail"
+];
+}
+if(
+/ゾウ|elephant/
+.test(text)
+){
+return[
+"ear",
+"trunk"
+];
+}
+if(
+/消防/
+.test(text)
+){
+return[
+"helmet",
+"hose"
+];
+}
+if(
+/宇宙/
+.test(text)
+){
+return[
+"helmet",
+"body"
+];
+}
+if(
+/車|car/
+.test(text)
+){
+return[
+"wheel",
+"body"
+];
+}
+if(
+/料理/
+.test(text)
+){
+return[
+"hat",
+"body"
+];
 }
 return[
-"face"
+"shape"
 ];
 }
-function svg(parts){
-let out=[];
-if(
-parts.includes(
-"face"
-)
-){
-out.push(
-`<circle cx="140" cy="150" r="55"/>`
-);
-}
+function render(parts){
+let shapes=[];
 if(
 parts.includes(
 "ears"
 )
 ){
-out.push(
-`<polygon points="95,100 115,60 135,100"/>`
+shapes.push(
+`<polygon points="90,120 115,70 130,120"/>`
 );
-out.push(
-`<polygon points="145,100 165,60 185,100"/>`
-);
-}
-if(
-parts.includes(
-"long"
-)
-){
-out.push(
-`<line x1="140" y1="200" x2="140" y2="250"/>`
+shapes.push(
+`<polygon points="150,120 170,70 190,120"/>`
 );
 }
 if(
 parts.includes(
-"hat"
+"whiskers"
 )
 ){
-out.push(
-`<rect x="90" y="55" width="100" height="30"/>`
+shapes.push(
+`<line x1="70" y1="150" x2="120" y2="150"/>`
+);
+shapes.push(
+`<line x1="160" y1="150" x2="210" y2="150"/>`
 );
 }
 if(
 parts.includes(
-"box"
+"tail"
 )
 ){
-out.push(
-`<rect x="70" y="110" width="140" height="70"/>`
+shapes.push(
+`<path d="M200 170 Q240 150 220 220"/>`
+);
+}
+if(
+parts.includes(
+"ear"
+)
+){
+shapes.push(
+`<circle cx="90" cy="150" r="20"/>`
+);
+shapes.push(
+`<circle cx="190" cy="150" r="20"/>`
+);
+}
+if(
+parts.includes(
+"trunk"
+)
+){
+shapes.push(
+`<line x1="140" y1="120" x2="140" y2="240"/>`
+);
+}
+if(
+parts.includes(
+"helmet"
+)
+){
+shapes.push(
+`<circle cx="140" cy="140" r="60"/>`
+);
+}
+if(
+parts.includes(
+"hose"
+)
+){
+shapes.push(
+`<path d="M120 180 Q200 180 220 220"/>`
 );
 }
 if(
@@ -187,11 +244,38 @@ parts.includes(
 "wheel"
 )
 ){
-out.push(
-`<circle cx="90" cy="190" r="18"/>`
+shapes.push(
+`<circle cx="90" cy="180" r="20"/>`
 );
-out.push(
-`<circle cx="190" cy="190" r="18"/>`
+shapes.push(
+`<circle cx="190" cy="180" r="20"/>`
+);
+}
+if(
+parts.includes(
+"body"
+)
+){
+shapes.push(
+`<rect x="90" y="120" width="100" height="60"/>`
+);
+}
+if(
+parts.includes(
+"hat"
+)
+){
+shapes.push(
+`<rect x="95" y="80" width="90" height="30"/>`
+);
+}
+if(
+parts.includes(
+"shape"
+)
+){
+shapes.push(
+`<circle cx="140" cy="140" r="60"/>`
 );
 }
 return `
@@ -200,13 +284,13 @@ viewBox="0 0 280 280"
 fill="none"
 stroke="black"
 stroke-width="8"
-stroke-linecap="round"
-stroke-linejoin="round">
-${out.join("")}
+stroke-linecap="round">
+${shapes.join("")}
 </svg>
 `;
 }
-drawBtn.onclick=()=>{
+generate.onclick=
+async()=>{
 const value=
 subject.value.trim();
 if(
@@ -214,25 +298,27 @@ if(
 ){
 return;
 }
-const parts=
-detect(
+info.textContent=
+"特徴抽出中…";
+const features=
+await extractFeatures(
 value
 );
-hint.textContent=
+info.textContent=
 "残した特徴："
 +
-parts.join(
-"・"
+features.join(
+" ・ "
 );
-const picture=
-svg(
-parts
+const svg=
+render(
+features
 );
 canvas.innerHTML=
-picture;
+svg;
 const blob=
 new Blob(
-[picture],
+[svg],
 {
 type:
 "image/svg+xml"
