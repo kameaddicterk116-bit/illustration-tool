@@ -21,27 +21,37 @@ padding:24px;
 width:100%;
 max-width:420px;
 border-radius:16px;
-text-align:center;
+}
+
+input{
+width:100%;
+padding:14px;
+font-size:18px;
+margin-bottom:12px;
 }
 
 button{
 width:100%;
 padding:14px;
-margin-bottom:10px;
 border:none;
 background:#111;
 color:white;
-font-size:18px;
-border-radius:12px;
+font-size:16px;
 }
 
 canvas{
 margin-top:20px;
-background:#fff;
-border-radius:12px;
 display:block;
 margin-left:auto;
 margin-right:auto;
+background:#fff;
+border-radius:12px;
+}
+
+.info{
+margin-top:12px;
+text-align:center;
+color:#666;
 }
 </style>
 </head>
@@ -52,10 +62,11 @@ margin-right:auto;
 
 <h1>かんたん絵</h1>
 
-<button onclick="drawCat()">🐱 ネコ</button>
-<button onclick="drawDog()">🐶 イヌ</button>
-<button onclick="drawElephant()">🐘 ゾウ</button>
-<button onclick="drawFire()">🚒 消防車</button>
+<input id="input" placeholder="ネコ / 犬 / ゾウ / 消防士">
+
+<button id="btn">描く</button>
+
+<div id="info" class="info"></div>
 
 <canvas id="cv" width="280" height="280"></canvas>
 
@@ -63,117 +74,175 @@ margin-right:auto;
 
 <script>
 
+const input = document.getElementById("input");
+const btn = document.getElementById("btn");
 const canvas = document.getElementById("cv");
 const ctx = canvas.getContext("2d");
+const info = document.getElementById("info");
+
+function clean(t){
+return t.normalize("NFKC").replace(/\s|　/g,"");
+}
+
+function detect(t){
+t = clean(t);
+
+if(t.includes("ネコ") || t.includes("猫") || t.includes("ねこ")){
+return "cat";
+}
+if(t.includes("犬") || t.includes("いぬ")){
+return "dog";
+}
+if(t.includes("ゾウ") || t.includes("象")){
+return "elephant";
+}
+if(t.includes("消防")){
+return "fire";
+}
+return "symbol";
+}
 
 function clear(){
 ctx.clearRect(0,0,280,280);
-ctx.fillStyle = "black";
+ctx.lineWidth = 8;
+ctx.lineCap = "round";
+ctx.lineJoin = "round";
 ctx.strokeStyle = "black";
 }
 
 // =====================
-// 🐱 ネコ
+// 🎨 赤ちゃんでも“それっぽい”描画版
 // =====================
-function drawCat(){
+function draw(type){
+
 clear();
+
+// =====================
+// 🐱 ネコ（顔ベース）
+// =====================
+if(type === "cat"){
 
 // 顔
 ctx.beginPath();
 ctx.arc(140,150,70,0,Math.PI*2);
-ctx.fill();
+ctx.stroke();
 
-// 耳
+// 耳（丸み三角）
 ctx.beginPath();
-ctx.arc(95,85,25,0,Math.PI*2);
-ctx.arc(185,85,25,0,Math.PI*2);
-ctx.fill();
+ctx.moveTo(90,120);
+ctx.quadraticCurveTo(110,60,140,120);
+ctx.moveTo(140,120);
+ctx.quadraticCurveTo(170,60,190,120);
+ctx.stroke();
 
-// 目（白）
-ctx.fillStyle = "white";
+// 目
 ctx.beginPath();
-ctx.arc(120,150,10,0,Math.PI*2);
-ctx.arc(160,150,10,0,Math.PI*2);
-ctx.fill();
-
-// 目（黒）
-ctx.fillStyle = "black";
-ctx.beginPath();
-ctx.arc(120,150,5,0,Math.PI*2);
-ctx.arc(160,150,5,0,Math.PI*2);
-ctx.fill();
+ctx.arc(120,150,6,0,Math.PI*2);
+ctx.arc(160,150,6,0,Math.PI*2);
+ctx.stroke();
 
 // 口
 ctx.beginPath();
-ctx.arc(140,175,15,0,Math.PI);
+ctx.arc(140,175,12,0,Math.PI);
 ctx.stroke();
 }
 
 // =====================
-// 🐶 イヌ
+// 🐶 イヌ（丸＋垂れ耳）
 // =====================
-function drawDog(){
-clear();
+else if(type === "dog"){
 
-// 顔
 ctx.beginPath();
 ctx.arc(140,150,75,0,Math.PI*2);
-ctx.fill();
-
-// 耳（垂れ）
-ctx.beginPath();
-ctx.ellipse(85,120,20,40,0,0,Math.PI*2);
-ctx.ellipse(195,120,20,40,0,0,Math.PI*2);
-ctx.fill();
-
-// 鼻
-ctx.beginPath();
-ctx.arc(140,165,12,0,Math.PI*2);
-ctx.fill();
-}
-
-// =====================
-// 🐘 ゾウ
-// =====================
-function drawElephant(){
-clear();
-
-// 頭
-ctx.beginPath();
-ctx.arc(140,140,80,0,Math.PI*2);
-ctx.fill();
+ctx.stroke();
 
 // 耳
 ctx.beginPath();
-ctx.arc(80,140,40,0,Math.PI*2);
-ctx.arc(200,140,40,0,Math.PI*2);
-ctx.fill();
+ctx.ellipse(90,150,20,40,0,0,Math.PI*2);
+ctx.ellipse(190,150,20,40,0,0,Math.PI*2);
+ctx.stroke();
+
+// 鼻
+ctx.beginPath();
+ctx.arc(140,165,6,0,Math.PI*2);
+ctx.stroke();
+}
+
+// =====================
+// 🐘 ゾウ（大丸＋耳＋鼻1本）
+// =====================
+else if(type === "elephant"){
+
+ctx.beginPath();
+ctx.arc(140,140,80,0,Math.PI*2);
+ctx.stroke();
+
+// 耳
+ctx.beginPath();
+ctx.arc(80,140,35,0,Math.PI*2);
+ctx.arc(200,140,35,0,Math.PI*2);
+ctx.stroke();
 
 // 鼻
 ctx.beginPath();
 ctx.moveTo(140,140);
-ctx.quadraticCurveTo(170,200,150,270);
+ctx.quadraticCurveTo(160,200,150,260);
 ctx.stroke();
 }
 
 // =====================
-// 🚒 消防車
+// 🚒 消防車（箱＋タイヤ）
 // =====================
-function drawFire(){
-clear();
+else if(type === "fire"){
 
 // 車体
-ctx.fillRect(70,140,140,60);
+ctx.beginPath();
+ctx.rect(80,140,120,50);
+ctx.stroke();
+
+// 上部
+ctx.beginPath();
+ctx.rect(100,110,80,30);
+ctx.stroke();
 
 // タイヤ
 ctx.beginPath();
-ctx.arc(100,210,15,0,Math.PI*2);
-ctx.arc(180,210,15,0,Math.PI*2);
-ctx.fill();
-
-// 上部ライト
-ctx.fillRect(90,120,100,20);
+ctx.arc(110,200,12,0,Math.PI*2);
+ctx.arc(170,200,12,0,Math.PI*2);
+ctx.stroke();
 }
+
+// =====================
+// ❓ その他（顔っぽい最小構成）
+// =====================
+else{
+
+ctx.beginPath();
+ctx.arc(140,150,70,0,Math.PI*2);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.arc(110,140,5,0,Math.PI*2);
+ctx.arc(170,140,5,0,Math.PI*2);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.arc(140,170,10,0,Math.PI);
+ctx.stroke();
+}
+
+info.textContent = type;
+}
+
+btn.onclick = () => {
+const t = input.value;
+if(!t) return;
+draw(detect(t));
+};
+
+input.addEventListener("keydown",(e)=>{
+if(e.key==="Enter") btn.click();
+});
 
 </script>
 
