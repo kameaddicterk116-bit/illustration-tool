@@ -3,125 +3,368 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>特徴だけ描く</title>
+<title>5秒で描ける絵</title>
 <style>
-body{
+*{
 margin:0;
-padding:24px;
+padding:0;
+box-sizing:border-box;
+}
+body{
 font-family:sans-serif;
-background:#f5f5f5;
+background:#f7f7f7;
+padding:24px;
 display:flex;
 justify-content:center;
 }
 .card{
-width:100%;
-max-width:420px;
 background:white;
 padding:24px;
+width:100%;
+max-width:420px;
 border-radius:18px;
+}
+h1{
+margin-bottom:8px;
+}
+p{
+color:#666;
+margin-bottom:18px;
 }
 input{
 width:100%;
 padding:14px;
 font-size:18px;
+border-radius:12px;
+border:1px solid #ddd;
 margin-bottom:12px;
 }
 button{
 width:100%;
 padding:14px;
-border:none;
 background:black;
 color:white;
+border:none;
+border-radius:12px;
 }
-img{
-width:100%;
-margin-top:18px;
+#canvas{
+margin-top:20px;
+display:flex;
+justify-content:center;
 }
-#status{
-margin-top:10px;
+svg{
+width:280px;
+height:280px;
+}
+.info{
+margin-top:12px;
+text-align:center;
 color:#666;
+}
+.download{
+display:block;
+margin-top:14px;
+padding:12px;
+text-align:center;
+border:1px solid black;
+border-radius:10px;
+text-decoration:none;
+color:black;
 }
 </style>
 </head>
 <body>
 <div class="card">
-<h1>特徴だけ描く</h1>
+<h1>
+5秒で描ける絵
+</h1>
 <p>
-AIで特徴を減らして描く
+特徴だけ残す
 </p>
 <input
 id="subject"
 placeholder="ネコ、消防士、掃除機">
 <button
-id="go">
+id="draw">
 描く
 </button>
 <div
-id="status">
+class="info"
+id="info">
 </div>
 <div
-id="result">
+id="canvas">
+</div>
+<div
+id="save">
 </div>
 </div>
 <script>
-async function simplify(name){
-const dict={
-ネコ:
-"cat ears whiskers",
-犬:
-"dog ears",
-キツネ:
-"fox ears tail",
-ゾウ:
-"elephant trunk",
-消防士:
-"helmet hose",
-宇宙飛行士:
+function think(word){
+const t=
+word.toLowerCase();
+if(
+/ネコ|猫|cat/
+.test(t)
+){
+return[
+"ears",
+"whiskers"
+];
+}
+if(
+/犬|dog/
+.test(t)
+){
+return[
+"ears",
+"tail"
+];
+}
+if(
+/ゾウ/
+.test(t)
+){
+return[
+"trunk",
+"ear"
+];
+}
+if(
+/消防/
+.test(t)
+){
+return[
 "helmet",
-車:
-"car wheels",
-掃除機:
-"hose",
-キリン:
-"long neck"
-};
-return (
-dict[name]
-||
-name
+"hose"
+];
+}
+if(
+/料理/
+.test(t)
+){
+return[
+"hat",
+"pan"
+];
+}
+if(
+/掃除/
+.test(t)
+){
+return[
+"pipe",
+"box"
+];
+}
+if(
+/車/
+.test(t)
+){
+return[
+"wheel",
+"body"
+];
+}
+return[
+"shape",
+"mark"
+];
+}
+function draw(parts){
+let s=[];
+if(
+parts.includes(
+"ears"
+)
+){
+s.push(
+`<path d="M80 130 L120 80 L130 130"/>`
+);
+s.push(
+`<path d="M150 130 L170 80 L200 130"/>`
 );
 }
-function makePrompt(feature){
-return encodeURIComponent(`
-${feature}
-very simple icon
-few lines
-child drawing
-minimal detail
-empty background
-easy to redraw
-black outline
-`);
+if(
+parts.includes(
+"whiskers"
+)
+){
+s.push(
+`<line x1="70" y1="150" x2="110" y2="150"/>`
+);
+s.push(
+`<line x1="170" y1="150" x2="210" y2="150"/>`
+);
 }
-go.onclick=
-async()=>{
-const text=
+if(
+parts.includes(
+"tail"
+)
+){
+s.push(
+`<path d="M180 170 Q240 160 220 230"/>`
+);
+}
+if(
+parts.includes(
+"trunk"
+)
+){
+s.push(
+`<line x1="140" y1="100" x2="140" y2="250"/>`
+);
+}
+if(
+parts.includes(
+"ear"
+)
+){
+s.push(
+`<circle cx="90" cy="140" r="18"/>`
+);
+s.push(
+`<circle cx="190" cy="140" r="18"/>`
+);
+}
+if(
+parts.includes(
+"helmet"
+)
+){
+s.push(
+`<path d="M90 120 Q140 50 190 120"/>`
+);
+}
+if(
+parts.includes(
+"hose")
+){
+s.push(
+`<path d="M130 160 Q220 170 220 230"/>`
+);
+}
+if(
+parts.includes(
+"wheel"
+)
+){
+s.push(
+`<circle cx="100" cy="200" r="18"/>`
+);
+s.push(
+`<circle cx="180" cy="200" r="18"/>`
+);
+}
+if(
+parts.includes(
+"body"
+)
+){
+s.push(
+`<rect x="80" y="130" width="120" height="50"/>`
+);
+}
+if(
+parts.includes(
+"hat"
+)
+){
+s.push(
+`<rect x="90" y="80" width="100" height="40"/>`
+);
+}
+if(
+parts.includes(
+"pan"
+)
+){
+s.push(
+`<circle cx="140" cy="190" r="40"/>`
+);
+}
+if(
+parts.includes(
+"pipe"
+)
+){
+s.push(
+`<path d="M80 180 Q140 120 210 180"/>`
+);
+}
+if(
+parts.includes(
+"box"
+)
+){
+s.push(
+`<rect x="110" y="120" width="60" height="90"/>`
+);
+}
+if(
+parts.includes(
+"shape"
+)
+){
+s.push(
+`<polygon points="140 60 210 210 70 210"/>`
+);
+}
+if(
+parts.includes(
+"mark"
+)
+){
+s.push(
+`<line x1="80" y1="80" x2="200" y2="220"/>`
+);
+}
+return `
+<svg
+viewBox="0 0 280 280"
+fill="none"
+stroke="black"
+stroke-width="8"
+stroke-linecap="round">
+${s.join("")}
+</svg>
+`;
+}
+draw.onclick=()=>{
+const value=
 subject.value.trim();
-if(!text){
-return;
-}
-status.textContent=
-"考え中…";
-const feature=
-await simplify(
-text
+if(
+!value
+)return;
+const features=
+think(
+value
 );
-status.textContent=
-feature;
-const url=
-`https://image.pollinations.ai/prompt/${makePrompt(feature)}?width=640&height=640&seed=${Math.random()*99999}&nologo=true`;
-result.innerHTML=
-`<img src="${url}">`;
+info.textContent=
+features.join(
+" ・ "
+);
+const svg=
+draw(
+features
+);
+canvas.innerHTML=
+svg;
+const blob=
+new Blob(
+[svg],
+{
+type:
+"image/svg+xml"
+}
+);
+save.innerHTML=
+`<a
+class="download"
+href="${URL.createObjectURL(blob)}"
+download="${value}.svg">
+保存
+</a>`;
 };
 </script>
 </body>
