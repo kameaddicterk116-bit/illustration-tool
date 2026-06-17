@@ -2,37 +2,252 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>究極のシンプル記号生成</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>かんたんイラスト生成</title>
 <style>
-  body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background: #fff; }
-  .card { width: 100%; max-width: 400px; text-align: center; }
-  input { width: 100%; padding: 15px; margin-bottom: 15px; border: 4px solid #000; border-radius: 12px; box-sizing: border-box; font-size: 1.1rem; }
-  button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
-  #result { margin-top: 20px; }
-  img { width: 100%; border: 4px solid #000; border-radius: 12px; }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+body{
+  font-family:-apple-system,"Hiragino Sans",sans-serif;
+  background:#f5f5f7;
+  padding:20px;
+  display:flex;
+  justify-content:center;
+}
+.card{
+  width:100%;
+  max-width:420px;
+  background:white;
+  border-radius:20px;
+  padding:24px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+h1{
+  font-size:1.4rem;
+  margin-bottom:8px;
+}
+.sub{
+  color:#777;
+  margin-bottom:18px;
+  font-size:.9rem;
+}
+label{
+  display:block;
+  margin-bottom:8px;
+}
+input[type=text]{
+  width:100%;
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  margin-bottom:18px;
+  font-size:1rem;
+}
+.style-group{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:18px;
+}
+.style-group label{
+  display:flex;
+  gap:8px;
+}
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:black;
+  color:white;
+  font-size:1rem;
+}
+button:disabled{
+  opacity:.5;
+}
+.status{
+  margin-top:14px;
+  text-align:center;
+  color:#777;
+}
+.result{
+  margin-top:18px;
+}
+.result img{
+  width:100%;
+  border-radius:12px;
+}
+.download{
+  display:block;
+  margin-top:10px;
+  text-align:center;
+  border:1px solid black;
+  padding:12px;
+  border-radius:10px;
+  color:black;
+  text-decoration:none;
+}
 </style>
 </head>
 <body>
 <div class="card">
-  <h3>だれの特徴？（例：めがねの男の子）</h3>
-  <input type="text" id="subject" placeholder="特徴を入力">
-  <button id="btn">生成</button>
-  <div id="result"></div>
+<h1>かんたんイラスト生成</h1>
+<p class="sub">
+子供でも描けるくらいシンプルに変換
+</p>
+<label>
+名前
+</label>
+<input
+id="subject"
+type="text"
+placeholder="例：ネコ、パンダ、アインシュタイン、宇宙飛行士"
+/>
+<label>
+スタイル
+</label>
+<div class="style-group">
+<label>
+<input
+checked
+type="radio"
+name="style"
+value="minimal children drawing, thick outline, circle shapes, no details, white background">
+かんたん線画
+</label>
+<label>
+<input
+type="radio"
+name="style"
+value="cute mascot icon, one flat color, very simple">
+1色キャラ
+</label>
 </div>
-
+<button id="btn">
+生成する
+</button>
+<div id="status" class="status"></div>
+<div id="result" class="result"></div>
+</div>
 <script>
-document.getElementById('btn').addEventListener('click', () => {
-  const sub = document.getElementById('subject').value;
-  const result = document.getElementById('result');
-  
-  // AIを「絵描き」ではなく「アイコンデザイナー」として強制定義するプロンプト
-  const prompt = encodeURIComponent(`${sub}, simple character icon, circular head, minimalist style, thick black vector outline, no colors, no shading, white background, flat, high contrast, symbol, easy to draw, 2D design`);
-  const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
-  
-  result.innerHTML = "かいてるよ…";
-  const img = new Image();
-  img.onload = () => result.innerHTML = `<img src="${url}">`;
-  img.src = url;
+const featureMap={
+"キツネ":
+"simple fox icon, triangle ears, fluffy tail",
+"パンダ":
+"simple panda icon, black eye circles",
+"ネコ":
+"simple cat icon, point ears",
+"イヌ":
+"simple dog icon, floppy ears",
+"ウサギ":
+"simple rabbit icon, long ears",
+"クマ":
+"simple bear icon",
+"ゾウ":
+"simple elephant icon, large ears",
+"ペンギン":
+"simple penguin icon",
+"宇宙飛行士":
+"simple astronaut icon",
+"料理人":
+"simple chef icon",
+"医者":
+"simple doctor icon",
+"消防士":
+"simple firefighter icon",
+"侍":
+"simple samurai icon",
+"アインシュタイン":
+"cute scientist character, white messy hair",
+"マイケルジャクソン":
+"cute performer character, curly hair",
+"モナリザ":
+"simple smiling portrait"
+};
+const normalize={
+"犬":"イヌ",
+"猫":"ネコ",
+"狐":"キツネ"
+};
+document
+.getElementById("btn")
+.addEventListener("click",()=>{
+const raw=
+document
+.getElementById("subject")
+.value
+.trim();
+const status=
+document.getElementById("status");
+const result=
+document.getElementById("result");
+const btn=
+document.getElementById("btn");
+if(!raw){
+status.textContent=
+"名前を入力してください";
+return;
+}
+const fixed=
+normalize[raw]||raw;
+const subject=
+featureMap[fixed]||fixed;
+const style=
+document.querySelector(
+'input[name="style"]:checked'
+).value;
+const extra=`
+extremely simplified,
+easy to redraw,
+child can draw,
+thick outline,
+recognizable shape,
+avoid realism,
+avoid details,
+minimal
+`;
+const prompt=
+encodeURIComponent(
+`${subject},
+${style},
+${extra}`
+);
+const seed=
+Math.floor(
+Math.random()*999999
+);
+const url=
+`https://image.pollinations.ai/prompt/${prompt}?width=640&height=640&seed=${seed}&nologo=true`;
+btn.disabled=true;
+status.textContent=
+"生成中…";
+result.innerHTML="";
+const img=
+new Image();
+img.onload=()=>{
+result.innerHTML=`
+<img src="${url}">
+<a
+class="download"
+href="${url}"
+target="_blank"
+download="${fixed}.png">
+保存する
+</a>
+`;
+status.textContent=
+"完成";
+btn.disabled=false;
+};
+img.onerror=()=>{
+status.textContent=
+"生成失敗";
+btn.disabled=false;
+};
+img.src=url;
 });
 </script>
 </body>
