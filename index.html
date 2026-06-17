@@ -10,13 +10,13 @@ body{
 margin:0;
 padding:24px;
 font-family:sans-serif;
-background:#f2f2f2;
+background:#eee;
 display:flex;
 justify-content:center;
 }
 
 .card{
-background:#fff;
+background:white;
 padding:24px;
 width:100%;
 max-width:420px;
@@ -35,7 +35,7 @@ width:100%;
 padding:14px;
 border:none;
 background:#111;
-color:#fff;
+color:white;
 font-size:16px;
 }
 
@@ -44,7 +44,7 @@ margin-top:20px;
 display:block;
 margin-left:auto;
 margin-right:auto;
-background:white;
+background:#fff;
 border-radius:12px;
 }
 
@@ -62,13 +62,13 @@ color:#666;
 
 <h1>かんたん絵</h1>
 
-<input id="input" placeholder="ネコ、犬、ゾウ、消防士">
+<input id="input" placeholder="ネコ / 犬 / ゾウ / 消防士">
 
 <button id="btn">描く</button>
 
 <div id="info" class="info"></div>
 
-<canvas id="c" width="280" height="280"></canvas>
+<canvas id="cv" width="280" height="280"></canvas>
 
 </div>
 
@@ -76,66 +76,81 @@ color:#666;
 
 const input = document.getElementById("input");
 const btn = document.getElementById("btn");
-const canvas = document.getElementById("c");
+const canvas = document.getElementById("cv");
 const ctx = canvas.getContext("2d");
 const info = document.getElementById("info");
 
-function normalize(t){
-return t.normalize("NFKC").replace(/[\s　]+/g,"");
+function clean(t){
+return t.normalize("NFKC").replace(/\s|　/g,"");
 }
 
-function extract(text){
+function detect(t){
+t = clean(t);
 
-const t = normalize(text);
-
-if(/ネコ|猫|ねこ/.test(t)) return "cat";
-if(/犬|いぬ/.test(t)) return "dog";
-if(/ゾウ|象/.test(t)) return "elephant";
-if(/消防/.test(t)) return "fire";
-
+if(t.includes("ネコ") || t.includes("猫") || t.includes("ねこ")){
+return "cat";
+}
+if(t.includes("犬") || t.includes("いぬ")){
+return "dog";
+}
+if(t.includes("ゾウ") || t.includes("象")){
+return "elephant";
+}
+if(t.includes("消防")){
+return "fire";
+}
 return "symbol";
 }
 
-function draw(type){
-
+function clear(){
 ctx.clearRect(0,0,280,280);
 ctx.lineWidth = 6;
 ctx.lineCap = "round";
 ctx.strokeStyle = "black";
+}
+
+function draw(type){
+
+clear();
 
 if(type === "cat"){
+
 // ears
 ctx.beginPath();
-ctx.moveTo(80,140);
+ctx.moveTo(70,150);
 ctx.lineTo(110,80);
-ctx.lineTo(140,140);
+ctx.lineTo(140,150);
 ctx.stroke();
 
 ctx.beginPath();
-ctx.moveTo(140,140);
-ctx.lineTo(170,80);
-ctx.lineTo(200,140);
+ctx.moveTo(140,150);
+ctx.lineTo(180,80);
+ctx.lineTo(210,150);
 ctx.stroke();
 
-// whisker
+// whiskers
 ctx.beginPath();
-ctx.moveTo(100,170);
-ctx.lineTo(200,170);
+ctx.moveTo(100,180);
+ctx.lineTo(200,180);
 ctx.stroke();
+
 }
 
 else if(type === "dog"){
+
 ctx.beginPath();
 ctx.arc(140,150,40,0,Math.PI*2);
 ctx.stroke();
 
 ctx.beginPath();
 ctx.moveTo(180,180);
-ctx.quadraticCurveTo(220,200,200,250);
+ctx.quadraticCurveTo(220,200,210,250);
 ctx.stroke();
+
 }
 
 else if(type === "elephant"){
+
 ctx.beginPath();
 ctx.arc(100,120,25,0,Math.PI*2);
 ctx.arc(180,120,25,0,Math.PI*2);
@@ -143,42 +158,42 @@ ctx.stroke();
 
 ctx.beginPath();
 ctx.moveTo(140,120);
-ctx.lineTo(140,240);
+ctx.lineTo(140,250);
 ctx.stroke();
+
 }
 
 else if(type === "fire"){
+
 ctx.beginPath();
-ctx.moveTo(100,180);
-ctx.quadraticCurveTo(140,80,180,180);
+ctx.moveTo(100,200);
+ctx.quadraticCurveTo(140,80,180,200);
 ctx.stroke();
 
 ctx.beginPath();
-ctx.moveTo(120,180);
+ctx.moveTo(120,200);
 ctx.lineTo(200,250);
 ctx.stroke();
+
 }
 
 else{
-// symbol
+
 ctx.beginPath();
 ctx.moveTo(80,160);
-ctx.quadraticCurveTo(140,80,200,160);
+ctx.quadraticCurveTo(140,60,200,160);
 ctx.stroke();
+
 }
 
 info.textContent = type;
 }
 
-btn.addEventListener("click", ()=>{
-
-const text = input.value;
-if(!text) return;
-
-const type = extract(text);
-draw(type);
-
-});
+btn.onclick = () => {
+const t = input.value;
+if(!t) return;
+draw(detect(t));
+};
 
 input.addEventListener("keydown",(e)=>{
 if(e.key==="Enter") btn.click();
