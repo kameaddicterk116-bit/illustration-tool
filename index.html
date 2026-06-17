@@ -2,228 +2,247 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>かんたんイラスト生成</title>
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1">
+<title>まるかきイラスト</title>
 <style>
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+box-sizing:border-box;
+margin:0;
+padding:0;
 }
 body{
-  font-family:-apple-system,"Hiragino Sans",sans-serif;
-  background:#f5f5f7;
-  padding:20px;
-  display:flex;
-  justify-content:center;
+font-family:
+-apple-system,
+"Hiragino Sans";
+background:#f7f7f7;
+padding:24px;
+display:flex;
+justify-content:center;
 }
 .card{
-  width:100%;
-  max-width:420px;
-  background:white;
-  border-radius:20px;
-  padding:24px;
-  box-shadow:0 8px 24px rgba(0,0,0,.08);
+background:white;
+width:100%;
+max-width:420px;
+padding:24px;
+border-radius:24px;
+box-shadow:
+0 8px 24px
+rgba(0,0,0,.08);
 }
 h1{
-  font-size:1.4rem;
-  margin-bottom:8px;
+font-size:28px;
+margin-bottom:6px;
 }
 .sub{
-  color:#777;
-  margin-bottom:18px;
-  font-size:.9rem;
+color:#777;
+margin-bottom:20px;
 }
-label{
-  display:block;
-  margin-bottom:8px;
+input{
+width:100%;
+padding:14px;
+border-radius:14px;
+border:1px solid #ddd;
+font-size:18px;
+margin-bottom:18px;
 }
-input[type=text]{
-  width:100%;
-  padding:14px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  margin-bottom:18px;
-  font-size:1rem;
+.style{
+display:flex;
+flex-direction:column;
+gap:12px;
+margin-bottom:18px;
 }
-.style-group{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-bottom:18px;
-}
-.style-group label{
-  display:flex;
-  gap:8px;
+.style label{
+display:flex;
+gap:10px;
 }
 button{
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:12px;
-  background:black;
-  color:white;
-  font-size:1rem;
+width:100%;
+padding:16px;
+border:none;
+border-radius:16px;
+background:black;
+color:white;
+font-size:18px;
 }
 button:disabled{
-  opacity:.5;
+opacity:.5;
 }
 .status{
-  margin-top:14px;
-  text-align:center;
-  color:#777;
+margin-top:14px;
+text-align:center;
+color:#666;
 }
 .result{
-  margin-top:18px;
+margin-top:18px;
 }
 .result img{
-  width:100%;
-  border-radius:12px;
+width:100%;
+border-radius:16px;
 }
 .download{
-  display:block;
-  margin-top:10px;
-  text-align:center;
-  border:1px solid black;
-  padding:12px;
-  border-radius:10px;
-  color:black;
-  text-decoration:none;
+display:block;
+margin-top:10px;
+text-align:center;
+padding:12px;
+border-radius:12px;
+border:1px solid black;
+color:black;
+text-decoration:none;
 }
 </style>
 </head>
 <body>
 <div class="card">
-<h1>かんたんイラスト生成</h1>
+<h1>
+まるかき
+</h1>
 <p class="sub">
-子供でも描けるくらいシンプルに変換
+だれでも描けるくらい簡単
 </p>
-<label>
-名前
-</label>
 <input
 id="subject"
-type="text"
-placeholder="例：ネコ、パンダ、アインシュタイン、宇宙飛行士"
-/>
-<label>
-スタイル
-</label>
-<div class="style-group">
+placeholder=
+"ネコ、パンダ、宇宙飛行士"
+>
+<div class="style">
 <label>
 <input
 checked
 type="radio"
 name="style"
-value="minimal children drawing, thick outline, circle shapes, no details, white background">
-かんたん線画
+value="ultra simple mascot">
+まる顔
 </label>
 <label>
 <input
 type="radio"
 name="style"
-value="cute mascot icon, one flat color, very simple">
-1色キャラ
+value="single color mascot">
+1色
 </label>
 </div>
 <button id="btn">
-生成する
+生成
 </button>
-<div id="status" class="status"></div>
-<div id="result" class="result"></div>
+<div
+class="status"
+id="status">
+</div>
+<div
+class="result"
+id="result">
+</div>
 </div>
 <script>
-const featureMap={
-"キツネ":
-"simple fox icon, triangle ears, fluffy tail",
-"パンダ":
-"simple panda icon, black eye circles",
-"ネコ":
-"simple cat icon, point ears",
-"イヌ":
-"simple dog icon, floppy ears",
-"ウサギ":
-"simple rabbit icon, long ears",
-"クマ":
-"simple bear icon",
-"ゾウ":
-"simple elephant icon, large ears",
-"ペンギン":
-"simple penguin icon",
-"宇宙飛行士":
-"simple astronaut icon",
-"料理人":
-"simple chef icon",
-"医者":
-"simple doctor icon",
-"消防士":
-"simple firefighter icon",
-"侍":
-"simple samurai icon",
-"アインシュタイン":
-"cute scientist character, white messy hair",
-"マイケルジャクソン":
-"cute performer character, curly hair",
-"モナリザ":
-"simple smiling portrait"
-};
 const normalize={
 "犬":"イヌ",
 "猫":"ネコ",
 "狐":"キツネ"
 };
+const featureMap={
+"ネコ":
+"round face cat, triangle ears",
+"イヌ":
+"round face dog, floppy ears",
+"キツネ":
+"round face fox, fluffy tail",
+"パンダ":
+"round panda",
+"クマ":
+"round bear",
+"ウサギ":
+"round rabbit, long ears",
+"ペンギン":
+"round penguin",
+"ゾウ":
+"round elephant",
+"宇宙飛行士":
+"round face, helmet",
+"料理人":
+"round face, chef hat",
+"医者":
+"round face, stethoscope",
+"消防士":
+"round face, helmet",
+"アインシュタイン":
+"round face, messy white hair"
+};
+function buildPrompt(subject){
+return encodeURIComponent(`
+cute mascot,
+ultra minimal,
+single outline,
+big round head,
+tiny body,
+dot eyes,
+tiny mouth,
+maximum 2 features,
+empty white background,
+flat drawing,
+child can redraw,
+no realism,
+no details,
+no texture,
+no fingers,
+icon only,
+recognizable silhouette,
+${subject}
+`);
+}
 document
 .getElementById("btn")
-.addEventListener("click",()=>{
+.addEventListener(
+"click",
+()=>{
 const raw=
 document
-.getElementById("subject")
+.getElementById(
+"subject"
+)
 .value
 .trim();
 const status=
-document.getElementById("status");
+document
+.getElementById(
+"status"
+);
 const result=
-document.getElementById("result");
+document
+.getElementById(
+"result"
+);
 const btn=
-document.getElementById("btn");
+document
+.getElementById(
+"btn"
+);
 if(!raw){
 status.textContent=
-"名前を入力してください";
+"入力してください";
 return;
 }
 const fixed=
-normalize[raw]||raw;
+normalize[raw]
+||
+raw;
 const subject=
-featureMap[fixed]||fixed;
-const style=
-document.querySelector(
-'input[name="style"]:checked'
-).value;
-const extra=`
-extremely simplified,
-easy to redraw,
-child can draw,
-thick outline,
-recognizable shape,
-avoid realism,
-avoid details,
-minimal
-`;
+featureMap[fixed]
+||
+`round mascot of ${fixed}`;
 const prompt=
-encodeURIComponent(
-`${subject},
-${style},
-${extra}`
-);
+buildPrompt(subject);
 const seed=
 Math.floor(
-Math.random()*999999
+Math.random()
+*999999
 );
 const url=
-`https://image.pollinations.ai/prompt/${prompt}?width=640&height=640&seed=${seed}&nologo=true`;
+`https://image.pollinations.ai/prompt/${prompt}?seed=${seed}&width=640&height=640&nologo=true`;
 btn.disabled=true;
 status.textContent=
-"生成中…";
+"描いてる…";
 result.innerHTML="";
 const img=
 new Image();
@@ -235,7 +254,7 @@ class="download"
 href="${url}"
 target="_blank"
 download="${fixed}.png">
-保存する
+保存
 </a>
 `;
 status.textContent=
@@ -244,11 +263,12 @@ btn.disabled=false;
 };
 img.onerror=()=>{
 status.textContent=
-"生成失敗";
+"失敗";
 btn.disabled=false;
 };
 img.src=url;
-});
+}
+);
 </script>
 </body>
 </html>
