@@ -5,107 +5,189 @@
 <meta
 name="viewport"
 content="width=device-width,initial-scale=1">
-<title>5秒で描ける絵</title>
+<title>らくがき生成</title>
 <style>
-body{
+*{
+box-sizing:border-box;
 margin:0;
-font-family:sans-serif;
-background:#fafafa;
+padding:0;
+}
+body{
+font-family:
+sans-serif;
+background:#f6f6f6;
+padding:24px;
 display:flex;
 justify-content:center;
-padding:20px;
 }
 .card{
 width:100%;
 max-width:420px;
 background:white;
-padding:20px;
-border-radius:16px;
+padding:24px;
+border-radius:20px;
 }
 h1{
+font-size:26px;
 margin-bottom:8px;
 }
-p{
+.sub{
 color:#666;
-margin-bottom:16px;
+margin-bottom:18px;
 }
 input{
 width:100%;
 padding:14px;
 font-size:18px;
-margin-bottom:12px;
+border-radius:12px;
+border:1px solid #ddd;
+margin-bottom:14px;
 }
 button{
 width:100%;
-padding:14px;
+padding:16px;
 background:black;
 color:white;
 border:none;
+border-radius:14px;
+font-size:16px;
 }
-img{
+button:disabled{
+opacity:.5;
+}
+.status{
+margin-top:14px;
+text-align:center;
+color:#777;
+}
+.result{
+margin-top:18px;
+}
+.result img{
 width:100%;
-margin-top:16px;
+display:block;
+}
+.download{
+display:block;
+margin-top:10px;
+padding:12px;
+text-align:center;
+border:1px solid black;
+color:black;
+text-decoration:none;
+border-radius:10px;
 }
 </style>
 </head>
 <body>
 <div class="card">
 <h1>
-5秒で描ける絵
+らくがき生成
 </h1>
-<p>
-特徴ひとつだけ
+<p class="sub">
+子供でもすぐ描ける単純な絵
 </p>
 <input
 id="subject"
-placeholder="ネコ、ゾウ、消防士">
+placeholder="ネコ、キツネ、消防士"
+>
 <button
-id="go">
+id="btn">
 生成
 </button>
-<div id="result"></div>
+<div
+class="status"
+id="status">
+</div>
+<div
+class="result"
+id="result">
+</div>
 </div>
 <script>
-const map={
-ネコ:"cat ears",
-イヌ:"dog ears",
-キツネ:"fox ears",
-ゾウ:"trunk",
-ウサギ:"long ears",
-パンダ:"black eyes",
-ペンギン:"oval",
-宇宙飛行士:"helmet",
-料理人:"chef hat",
-医者:"stethoscope"
+const normalize={
+犬:"イヌ",
+猫:"ネコ",
+狐:"キツネ"
 };
-function make(subject){
-return encodeURIComponent(`
-icon.
-3 strokes.
-only circles.
-only one feature.
-unfinished.
-child drawing.
-black line.
-white background.
-${subject}
-`);
+function buildPrompt(subject){
+return encodeURIComponent(
+`${subject}
+child notebook doodle
+single black line
+very large empty space
+unfinished
+very low detail
+symbol
+simple shape
+white background`
+);
 }
-go.onclick=()=>{
+const btn=
+document.getElementById(
+"btn"
+);
+btn.onclick=()=>{
 const raw=
-subject.value.trim();
+document
+.getElementById(
+"subject"
+)
+.value
+.trim();
+const status=
+document
+.getElementById(
+"status"
+);
+const result=
+document
+.getElementById(
+"result"
+);
 if(!raw){
+status.textContent=
+"入力してください";
 return;
 }
-const simple=
-map[raw]
+btn.disabled=true;
+status.textContent=
+"生成中…";
+result.innerHTML="";
+const subject=
+normalize[raw]
 ||
 raw;
+const seed=
+Math.floor(
+Math.random()
+*999999
+);
 const url=
-`https://image.pollinations.ai/prompt/${make(simple)}?width=512&height=512&seed=${Math.random()*99999}&nologo=true`;
+`https://image.pollinations.ai/prompt/${buildPrompt(subject)}&seed=${seed}&width=512&height=512&nologo=true`;
+const img=
+new Image();
+img.onload=()=>{
+status.textContent=
+"完成";
 result.innerHTML=`
 <img src="${url}">
+<a
+class="download"
+href="${url}"
+target="_blank"
+download="${subject}.png">
+保存
+</a>
 `;
+btn.disabled=false;
+};
+img.onerror=()=>{
+status.textContent=
+"失敗";
+btn.disabled=false;
+};
+img.src=url;
 };
 </script>
 </body>
