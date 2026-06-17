@@ -9,15 +9,15 @@ body{
 margin:0;
 padding:24px;
 font-family:sans-serif;
-background:#f6f6f6;
+background:#f5f5f5;
 display:flex;
 justify-content:center;
 }
 .card{
+width:100%;
+max-width:420px;
 background:white;
 padding:24px;
-max-width:480px;
-width:100%;
 border-radius:18px;
 }
 input{
@@ -29,32 +29,25 @@ margin-bottom:12px;
 button{
 width:100%;
 padding:14px;
+border:none;
 background:black;
 color:white;
-border:none;
 }
-#canvas{
-margin-top:20px;
-display:flex;
-justify-content:center;
+img{
+width:100%;
+margin-top:18px;
 }
-svg{
-width:280px;
-height:280px;
-}
-.small{
-margin-top:12px;
+#status{
+margin-top:10px;
 color:#666;
 }
 </style>
 </head>
 <body>
 <div class="card">
-<h1>
-特徴だけ描く
-</h1>
+<h1>特徴だけ描く</h1>
 <p>
-AIが特徴を2個だけ残す
+AIで特徴を減らして描く
 </p>
 <input
 id="subject"
@@ -64,146 +57,71 @@ id="go">
 描く
 </button>
 <div
-class="small"
 id="status">
 </div>
 <div
-id="canvas">
+id="result">
 </div>
 </div>
 <script>
-const API_KEY="ここにAPIキー";
-async function extractFeatures(text){
-const res=
-await fetch(
-"https://api.openai.com/v1/chat/completions",
-{
-method:"POST",
-headers:{
-"Content-Type":
-"application/json",
-Authorization:
-`Bearer ${API_KEY}`
-},
-body:
-JSON.stringify({
-model:
-"gpt-4.1-mini",
-messages:[
-{
-role:
-"system",
-content:
-`
-入力された物を
-子供が5秒で描くなら
-残す特徴を
-2個だけ返す。
-JSONのみ。
-{
-"features":[]
-}
-`
-},
-{
-role:
-"user",
-content:text
-}
-]
-})
-}
-);
-const json=
-await res.json();
-return JSON.parse(
-json
-.choices[0]
-.message
-.content
-).features;
-}
-function draw(parts){
-let s=[];
-parts.forEach(
-(
-p,
-i
-)=>{
-if(
-/耳/
-.test(
-p
-)
-){
-s.push(
-`<polygon points="90 120 110 70 130 120"/>`
+async function simplify(name){
+const dict={
+ネコ:
+"cat ears whiskers",
+犬:
+"dog ears",
+キツネ:
+"fox ears tail",
+ゾウ:
+"elephant trunk",
+消防士:
+"helmet hose",
+宇宙飛行士:
+"helmet",
+車:
+"car wheels",
+掃除機:
+"hose",
+キリン:
+"long neck"
+};
+return (
+dict[name]
+||
+name
 );
 }
-else if(
-/鼻|ホース/
-.test(
-p
-)
-){
-s.push(
-`<line x1="140" y1="120" x2="140" y2="240"/>`
-);
-}
-else if(
-/帽|ヘルメット/
-.test(
-p
-)
-){
-s.push(
-`<rect x="95" y="70" width="90" height="35"/>`
-);
-}
-else{
-s.push(
-`<circle cx="${140+i*10}" cy="140" r="60"/>`
-);
-}
-}
-);
-return `
-<svg
-viewBox="0 0 280 280"
-fill="none"
-stroke="black"
-stroke-width="8">
-${s.join("")}
-</svg>
-`;
+function makePrompt(feature){
+return encodeURIComponent(`
+${feature}
+very simple icon
+few lines
+child drawing
+minimal detail
+empty background
+easy to redraw
+black outline
+`);
 }
 go.onclick=
 async()=>{
-const value=
+const text=
 subject.value.trim();
-if(
-!value
-)return;
-status.textContent=
-"AI判別中…";
-try{
-const parts=
-await extractFeatures(
-value
-);
-status.textContent=
-parts.join(
-" ・ "
-);
-canvas.innerHTML=
-draw(
-parts
-);
+if(!text){
+return;
 }
-catch{
 status.textContent=
-"失敗";
-}
+"考え中…";
+const feature=
+await simplify(
+text
+);
+status.textContent=
+feature;
+const url=
+`https://image.pollinations.ai/prompt/${makePrompt(feature)}?width=640&height=640&seed=${Math.random()*99999}&nologo=true`;
+result.innerHTML=
+`<img src="${url}">`;
 };
 </script>
 </body>
