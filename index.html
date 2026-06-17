@@ -2,15 +2,13 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1">
-<title>らくがき生成</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>かんたん絵</title>
 <style>
 *{
-box-sizing:border-box;
 margin:0;
 padding:0;
+box-sizing:border-box;
 }
 body{
 font-family:
@@ -21,15 +19,15 @@ display:flex;
 justify-content:center;
 }
 .card{
-width:100%;
-max-width:420px;
 background:white;
 padding:24px;
 border-radius:20px;
+width:100%;
+max-width:420px;
 }
 h1{
-font-size:26px;
-margin-bottom:8px;
+font-size:28px;
+margin-bottom:6px;
 }
 .sub{
 color:#666;
@@ -39,155 +37,176 @@ input{
 width:100%;
 padding:14px;
 font-size:18px;
-border-radius:12px;
 border:1px solid #ddd;
-margin-bottom:14px;
+border-radius:12px;
+margin-bottom:12px;
 }
 button{
 width:100%;
-padding:16px;
+padding:14px;
 background:black;
 color:white;
 border:none;
-border-radius:14px;
+border-radius:12px;
 font-size:16px;
 }
-button:disabled{
-opacity:.5;
+#canvas{
+margin-top:20px;
+display:flex;
+justify-content:center;
 }
-.status{
-margin-top:14px;
-text-align:center;
-color:#777;
-}
-.result{
-margin-top:18px;
-}
-.result img{
-width:100%;
-display:block;
+svg{
+width:280px;
+height:280px;
 }
 .download{
 display:block;
-margin-top:10px;
+margin-top:14px;
 padding:12px;
 text-align:center;
 border:1px solid black;
+border-radius:10px;
 color:black;
 text-decoration:none;
-border-radius:10px;
 }
 </style>
 </head>
 <body>
 <div class="card">
 <h1>
-らくがき生成
+かんたん絵
 </h1>
 <p class="sub">
-子供でもすぐ描ける単純な絵
+特徴だけ残して描く
 </p>
 <input
 id="subject"
-placeholder="ネコ、キツネ、消防士"
+placeholder="ネコ、ゾウ、車、宇宙飛行士"
 >
-<button
-id="btn">
-生成
+<button id="draw">
+描く
 </button>
-<div
-class="status"
-id="status">
-</div>
-<div
-class="result"
-id="result">
-</div>
+<div id="canvas"></div>
+<div id="save"></div>
 </div>
 <script>
-const normalize={
-犬:"イヌ",
-猫:"ネコ",
-狐:"キツネ"
+const map={
+ネコ:`
+<circle cx="140" cy="150" r="60"/>
+<polygon points="90,100 110,60 130,100"/>
+<polygon points="150,100 170,60 190,100"/>
+`,
+イヌ:`
+<circle cx="140" cy="150" r="60"/>
+<line x1="90" y1="110" x2="75" y2="180"/>
+<line x1="190" y1="110" x2="205" y2="180"/>
+`,
+ゾウ:`
+<circle cx="140" cy="140" r="60"/>
+<line x1="140" y1="190" x2="140" y2="250"/>
+`,
+ウサギ:`
+<circle cx="140" cy="170" r="60"/>
+<line x1="120" y1="40" x2="120" y2="110"/>
+<line x1="160" y1="40" x2="160" y2="110"/>
+`,
+ペンギン:`
+<ellipse
+cx="140"
+cy="150"
+rx="55"
+ry="75"/>
+`,
+車:`
+<rect
+x="60"
+y="120"
+width="160"
+height="60"/>
+<circle
+cx="90"
+cy="190"
+r="20"/>
+<circle
+cx="190"
+cy="190"
+r="20"/>
+`,
+宇宙飛行士:`
+<circle
+cx="140"
+cy="140"
+r="70"/>
+<circle
+cx="140"
+cy="140"
+r="45"/>
+`,
+料理人:`
+<rect
+x="90"
+y="60"
+width="100"
+height="40"/>
+<circle
+cx="140"
+cy="170"
+r="60"/>
+`
 };
-function buildPrompt(subject){
-return encodeURIComponent(
-`${subject}
-child notebook doodle
-single black line
-very large empty space
-unfinished
-very low detail
-symbol
-simple shape
-white background`
-);
+function fallback(name){
+return `
+<text
+x="140"
+y="150"
+text-anchor="middle"
+font-size="24">
+${name}
+</text>
+`;
 }
-const btn=
-document.getElementById(
-"btn"
-);
-btn.onclick=()=>{
-const raw=
-document
-.getElementById(
-"subject"
-)
-.value
-.trim();
-const status=
-document
-.getElementById(
-"status"
-);
-const result=
-document
-.getElementById(
-"result"
-);
-if(!raw){
-status.textContent=
-"入力してください";
+draw.onclick=()=>{
+const input=
+subject.value.trim();
+if(!input){
 return;
 }
-btn.disabled=true;
-status.textContent=
-"生成中…";
-result.innerHTML="";
-const subject=
-normalize[raw]
+const art=
+map[input]
 ||
-raw;
-const seed=
-Math.floor(
-Math.random()
-*999999
+fallback(input);
+const svg=`
+<svg
+viewBox="0 0 280 280"
+fill="none"
+stroke="black"
+stroke-width="8"
+stroke-linecap="round"
+stroke-linejoin="round">
+${art}
+</svg>
+`;
+canvas.innerHTML=svg;
+const blob=
+new Blob(
+[svg],
+{
+type:
+"image/svg+xml"
+}
 );
 const url=
-`https://image.pollinations.ai/prompt/${buildPrompt(subject)}&seed=${seed}&width=512&height=512&nologo=true`;
-const img=
-new Image();
-img.onload=()=>{
-status.textContent=
-"完成";
-result.innerHTML=`
-<img src="${url}">
+URL.createObjectURL(
+blob
+);
+save.innerHTML=`
 <a
 class="download"
 href="${url}"
-target="_blank"
-download="${subject}.png">
+download="${input}.svg">
 保存
 </a>
 `;
-btn.disabled=false;
-};
-img.onerror=()=>{
-status.textContent=
-"失敗";
-btn.disabled=false;
-};
-img.src=url;
 };
 </script>
 </body>
