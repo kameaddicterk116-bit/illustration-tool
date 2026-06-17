@@ -83,29 +83,44 @@ const canvas = document.getElementById("canvas");
 const info = document.getElementById("info");
 
 
-// 🧠 ルール（ここ増やすだけでOK）
-const rules = [
-{ keys: ["ネコ","猫"], features: ["ear","whisker"] },
-{ keys: ["犬"], features: ["ear","tail"] },
-{ keys: ["ゾウ"], features: ["ear","trunk"] },
-{ keys: ["消防"], features: ["helmet","hose"] }
-];
+// 🧠 入力ゆるく受ける（ここが超重要）
+function normalizeText(text){
+return text
+.normalize("NFKC")
+.replace(/[\s　]+/g,"")   // スペース全削除
+.replace(/[、,]/g,"");    // 読点削除
+}
 
+
+// 🧠 判定
 function extract(text){
 
-const t = text.normalize("NFKC").replace(/\s/g,"");
+const t = normalizeText(text);
 
-for(const rule of rules){
-for(const k of rule.keys){
-if(t.includes(k)){
-return rule.features;
+console.log("INPUT:", text);
+console.log("CLEAN:", t);
+
+if(/ネコ|猫|ねこ/.test(t)){
+return ["ear","whisker"];
 }
+
+if(/犬|いぬ/.test(t)){
+return ["ear","tail"];
 }
+
+if(/ゾウ|象/.test(t)){
+return ["ear","trunk"];
+}
+
+if(/消防/.test(t)){
+return ["helmet","hose"];
 }
 
 return ["symbol"];
 }
 
+
+// 🎨 描画
 function render(features){
 
 let out = [];
@@ -155,19 +170,21 @@ out.push(`
 }
 
 return `
-<svg viewBox="0 0 280 280" fill="none"
-stroke="black" stroke-width="6"
+<svg viewBox="0 0 280 280"
+fill="none"
+stroke="black"
+stroke-width="6"
 stroke-linecap="round">
-
 ${out.join("")}
-
 </svg>
 `;
 }
 
+
+// 🚀 実行
 btn.addEventListener("click", ()=>{
 
-const text = input.value.trim();
+const text = input.value;
 if(!text) return;
 
 const features = extract(text);
@@ -179,7 +196,7 @@ canvas.innerHTML = render(features);
 });
 
 input.addEventListener("keydown",(e)=>{
-if(e.key==="Enter") btn.click();
+if(e.key === "Enter") btn.click();
 });
 
 </script>
