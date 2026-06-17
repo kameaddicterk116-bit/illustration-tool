@@ -5,216 +5,107 @@
 <meta
 name="viewport"
 content="width=device-width,initial-scale=1">
-<title>こどもイラスト</title>
+<title>5秒で描ける絵</title>
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
 body{
-font-family:
-sans-serif;
+margin:0;
+font-family:sans-serif;
 background:#fafafa;
-padding:24px;
 display:flex;
 justify-content:center;
+padding:20px;
 }
 .card{
-background:white;
-max-width:420px;
 width:100%;
-padding:24px;
-border-radius:20px;
+max-width:420px;
+background:white;
+padding:20px;
+border-radius:16px;
 }
 h1{
-font-size:28px;
 margin-bottom:8px;
 }
-.sub{
+p{
 color:#666;
-margin-bottom:18px;
+margin-bottom:16px;
 }
 input{
 width:100%;
-padding:16px;
+padding:14px;
 font-size:18px;
-border-radius:14px;
-border:1px solid #ddd;
-margin-bottom:18px;
+margin-bottom:12px;
 }
 button{
 width:100%;
-padding:16px;
-border:none;
-border-radius:14px;
+padding:14px;
 background:black;
 color:white;
-font-size:18px;
+border:none;
 }
-.result{
-margin-top:20px;
-}
-.result img{
+img{
 width:100%;
-border-radius:12px;
-}
-.status{
-text-align:center;
-margin-top:12px;
-color:#777;
-}
-.download{
-display:block;
-margin-top:12px;
-padding:12px;
-border:1px solid black;
-text-decoration:none;
-text-align:center;
-color:black;
-border-radius:10px;
+margin-top:16px;
 }
 </style>
 </head>
 <body>
 <div class="card">
 <h1>
-かんたん絵
+5秒で描ける絵
 </h1>
-<p class="sub">
-特徴ひとつだけ描く
+<p>
+特徴ひとつだけ
 </p>
 <input
 id="subject"
-placeholder=
-"ネコ、ゾウ、宇宙飛行士"
->
-<button id="btn">
-つくる
+placeholder="ネコ、ゾウ、消防士">
+<button
+id="go">
+生成
 </button>
-<div
-class="status"
-id="status">
-</div>
-<div
-class="result"
-id="result">
-</div>
+<div id="result"></div>
 </div>
 <script>
-const normalize={
-"犬":"イヌ",
-"猫":"ネコ",
-"狐":"キツネ"
+const map={
+ネコ:"cat ears",
+イヌ:"dog ears",
+キツネ:"fox ears",
+ゾウ:"trunk",
+ウサギ:"long ears",
+パンダ:"black eyes",
+ペンギン:"oval",
+宇宙飛行士:"helmet",
+料理人:"chef hat",
+医者:"stethoscope"
 };
-const featureMap={
-"ネコ":
-"triangle ears",
-"イヌ":
-"long ears",
-"キツネ":
-"triangle ears",
-"ウサギ":
-"two long ears",
-"パンダ":
-"two black circles",
-"クマ":
-"two round ears",
-"ゾウ":
-"one trunk",
-"ペンギン":
-"oval body",
-"宇宙飛行士":
-"round helmet",
-"料理人":
-"chef hat",
-"医者":
-"stethoscope",
-"消防士":
-"helmet"
-};
-function prompt(subject){
+function make(subject){
 return encodeURIComponent(`
-draw using only:
-maximum 5 strokes
-only circles
-triangles
-rectangles
-one characteristic only
-outline only
-large empty space
-black line
-white background
-remove details
-remove realism
-remove texture
-remove shading
-looks hand drawn
-looks unfinished
-easy for child age 5
-symbol only
+icon.
+3 strokes.
+only circles.
+only one feature.
+unfinished.
+child drawing.
+black line.
+white background.
 ${subject}
 `);
 }
-document
-.getElementById(
-"btn"
-)
-.onclick=()=>{
+go.onclick=()=>{
 const raw=
-document
-.getElementById(
-"subject"
-)
-.value
-.trim();
+subject.value.trim();
 if(!raw){
 return;
 }
-const name=
-normalize[raw]
+const simple=
+map[raw]
 ||
 raw;
-const subject=
-featureMap[name]
-||
-name;
 const url=
-`https://image.pollinations.ai/prompt/${prompt(subject)}?seed=${Math.random()*999999}&width=640&height=640&nologo=true`;
-const result=
-document
-.getElementById(
-"result"
-);
-const status=
-document
-.getElementById(
-"status"
-);
-status.textContent=
-"描いてる…";
-result.innerHTML="";
-const img=
-new Image();
-img.onload=()=>{
-status.textContent=
-"完成";
+`https://image.pollinations.ai/prompt/${make(simple)}?width=512&height=512&seed=${Math.random()*99999}&nologo=true`;
 result.innerHTML=`
 <img src="${url}">
-<a
-class="download"
-href="${url}"
-target="_blank"
-download="${name}.png">
-保存
-</a>
 `;
-};
-img.onerror=()=>{
-status.textContent=
-"失敗";
-};
-img.src=url;
 };
 </script>
 </body>
