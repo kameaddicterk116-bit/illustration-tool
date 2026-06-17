@@ -2,51 +2,45 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>シンプルイラスト生成</title>
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1">
+<title>こどもイラスト</title>
 <style>
 *{
-box-sizing:border-box;
 margin:0;
 padding:0;
+box-sizing:border-box;
 }
 body{
-font-family:-apple-system,"Hiragino Sans",sans-serif;
-background:#f5f5f5;
+font-family:
+sans-serif;
+background:#fafafa;
 padding:24px;
 display:flex;
 justify-content:center;
 }
 .card{
-width:100%;
-max-width:420px;
 background:white;
+max-width:420px;
+width:100%;
 padding:24px;
 border-radius:20px;
-box-shadow:
-0 4px 18px
-rgba(0,0,0,.08);
 }
 h1{
-font-size:26px;
-margin-bottom:6px;
+font-size:28px;
+margin-bottom:8px;
 }
 .sub{
 color:#666;
 margin-bottom:18px;
 }
-input[type=text]{
+input{
 width:100%;
-padding:14px;
-font-size:16px;
-border-radius:12px;
+padding:16px;
+font-size:18px;
+border-radius:14px;
 border:1px solid #ddd;
-margin-bottom:18px;
-}
-.style{
-display:flex;
-flex-direction:column;
-gap:10px;
 margin-bottom:18px;
 }
 button{
@@ -56,68 +50,47 @@ border:none;
 border-radius:14px;
 background:black;
 color:white;
-font-size:16px;
-}
-button:disabled{
-opacity:.5;
-}
-.status{
-margin-top:14px;
-text-align:center;
-color:#777;
+font-size:18px;
 }
 .result{
-margin-top:18px;
+margin-top:20px;
 }
 .result img{
 width:100%;
-display:block;
 border-radius:12px;
+}
+.status{
+text-align:center;
+margin-top:12px;
+color:#777;
 }
 .download{
 display:block;
-margin-top:10px;
+margin-top:12px;
 padding:12px;
 border:1px solid black;
-border-radius:10px;
+text-decoration:none;
 text-align:center;
 color:black;
-text-decoration:none;
+border-radius:10px;
 }
 </style>
 </head>
 <body>
 <div class="card">
 <h1>
-イラスト生成
+かんたん絵
 </h1>
 <p class="sub">
-特徴だけ残して単純化
+特徴ひとつだけ描く
 </p>
 <input
 id="subject"
-type="text"
-placeholder="ネコ、キツネ、宇宙飛行士"
+placeholder=
+"ネコ、ゾウ、宇宙飛行士"
 >
-<div class="style">
-<label>
-<input
-checked
-type="radio"
-name="style"
-value="minimal line drawing">
-線画
-</label>
-<label>
-<input
-type="radio"
-name="style"
-value="flat monochrome">
-1色
-</label>
-</div>
 <button id="btn">
-生成
+つくる
 </button>
 <div
 class="status"
@@ -136,134 +109,113 @@ const normalize={
 };
 const featureMap={
 "ネコ":
-"cat silhouette, point ears",
+"triangle ears",
 "イヌ":
-"dog silhouette, floppy ears",
+"long ears",
 "キツネ":
-"fox silhouette, triangle ears and tail",
-"パンダ":
-"eye patches only",
-"クマ":
-"bear silhouette",
+"triangle ears",
 "ウサギ":
-"rabbit silhouette long ears",
+"two long ears",
+"パンダ":
+"two black circles",
+"クマ":
+"two round ears",
 "ゾウ":
-"elephant silhouette trunk",
+"one trunk",
 "ペンギン":
-"penguin silhouette",
+"oval body",
 "宇宙飛行士":
-"helmet only",
+"round helmet",
 "料理人":
-"chef hat only",
+"chef hat",
 "医者":
-"stethoscope only",
+"stethoscope",
 "消防士":
-"helmet and hose",
-"アインシュタイン":
-"wild hair silhouette"
+"helmet"
 };
-function buildPrompt(subject,style){
+function prompt(subject){
 return encodeURIComponent(`
-minimal illustration,
-few lines,
-maximum two features,
-symbolic drawing,
-recognizable shape,
-silhouette first,
-flat design,
-uniform line width,
-empty white background,
-no realism,
-no details,
-no texture,
-no expression,
-no decoration,
-avoid mascot,
-avoid cute style,
-avoid rendering,
-easy to redraw,
-icon simplicity,
-${style},
+draw using only:
+maximum 5 strokes
+only circles
+triangles
+rectangles
+one characteristic only
+outline only
+large empty space
+black line
+white background
+remove details
+remove realism
+remove texture
+remove shading
+looks hand drawn
+looks unfinished
+easy for child age 5
+symbol only
 ${subject}
 `);
 }
 document
-.getElementById("btn")
-.addEventListener(
-"click",
-()=>{
+.getElementById(
+"btn"
+)
+.onclick=()=>{
 const raw=
 document
-.getElementById("subject")
+.getElementById(
+"subject"
+)
 .value
 .trim();
-const status=
-document
-.getElementById("status");
-const result=
-document
-.getElementById("result");
-const btn=
-document
-.getElementById("btn");
 if(!raw){
-status.textContent=
-"入力してください";
 return;
 }
-const fixed=
+const name=
 normalize[raw]
 ||
 raw;
 const subject=
-featureMap[fixed]
+featureMap[name]
 ||
-`${fixed} simplified silhouette`;
-const style=
-document.querySelector(
-'input[name="style"]:checked'
-).value;
-const prompt=
-buildPrompt(
-subject,
-style
-);
-const seed=
-Math.floor(
-Math.random()
-*999999
-);
+name;
 const url=
-`https://image.pollinations.ai/prompt/${prompt}?width=640&height=640&seed=${seed}&nologo=true`;
-btn.disabled=true;
+`https://image.pollinations.ai/prompt/${prompt(subject)}?seed=${Math.random()*999999}&width=640&height=640&nologo=true`;
+const result=
+document
+.getElementById(
+"result"
+);
+const status=
+document
+.getElementById(
+"status"
+);
 status.textContent=
-"生成中…";
+"描いてる…";
 result.innerHTML="";
 const img=
 new Image();
 img.onload=()=>{
+status.textContent=
+"完成";
 result.innerHTML=`
 <img src="${url}">
 <a
 class="download"
 href="${url}"
 target="_blank"
-download="${fixed}.png">
+download="${name}.png">
 保存
 </a>
 `;
-status.textContent=
-"完成";
-btn.disabled=false;
 };
 img.onerror=()=>{
 status.textContent=
-"生成失敗";
-btn.disabled=false;
+"失敗";
 };
 img.src=url;
-}
-);
+};
 </script>
 </body>
 </html>
