@@ -21,37 +21,27 @@ padding:24px;
 width:100%;
 max-width:420px;
 border-radius:16px;
-}
-
-input{
-width:100%;
-padding:14px;
-font-size:18px;
-margin-bottom:12px;
+text-align:center;
 }
 
 button{
 width:100%;
 padding:14px;
+margin-bottom:10px;
 border:none;
 background:#111;
 color:white;
-font-size:16px;
+font-size:18px;
+border-radius:12px;
 }
 
 canvas{
 margin-top:20px;
+background:#fff;
+border-radius:12px;
 display:block;
 margin-left:auto;
 margin-right:auto;
-background:#fff;
-border-radius:12px;
-}
-
-.info{
-margin-top:12px;
-text-align:center;
-color:#666;
 }
 </style>
 </head>
@@ -62,11 +52,10 @@ color:#666;
 
 <h1>かんたん絵</h1>
 
-<input id="input" placeholder="ネコ / 犬 / ゾウ / 消防士">
-
-<button id="btn">描く</button>
-
-<div id="info" class="info"></div>
+<button onclick="drawCat()">🐱 ネコ</button>
+<button onclick="drawDog()">🐶 イヌ</button>
+<button onclick="drawElephant()">🐘 ゾウ</button>
+<button onclick="drawFire()">🚒 消防車</button>
 
 <canvas id="cv" width="280" height="280"></canvas>
 
@@ -74,130 +63,117 @@ color:#666;
 
 <script>
 
-const input = document.getElementById("input");
-const btn = document.getElementById("btn");
 const canvas = document.getElementById("cv");
 const ctx = canvas.getContext("2d");
-const info = document.getElementById("info");
-
-function clean(t){
-return t.normalize("NFKC").replace(/\s|　/g,"");
-}
-
-function detect(t){
-t = clean(t);
-
-if(t.includes("ネコ") || t.includes("猫") || t.includes("ねこ")){
-return "cat";
-}
-if(t.includes("犬") || t.includes("いぬ")){
-return "dog";
-}
-if(t.includes("ゾウ") || t.includes("象")){
-return "elephant";
-}
-if(t.includes("消防")){
-return "fire";
-}
-return "symbol";
-}
 
 function clear(){
 ctx.clearRect(0,0,280,280);
-ctx.lineWidth = 6;
-ctx.lineCap = "round";
+ctx.fillStyle = "black";
 ctx.strokeStyle = "black";
 }
 
-function draw(type){
-
+// =====================
+// 🐱 ネコ
+// =====================
+function drawCat(){
 clear();
 
-if(type === "cat"){
-
-// ears
+// 顔
 ctx.beginPath();
-ctx.moveTo(70,150);
-ctx.lineTo(110,80);
-ctx.lineTo(140,150);
-ctx.stroke();
+ctx.arc(140,150,70,0,Math.PI*2);
+ctx.fill();
 
+// 耳
 ctx.beginPath();
-ctx.moveTo(140,150);
-ctx.lineTo(180,80);
-ctx.lineTo(210,150);
-ctx.stroke();
+ctx.arc(95,85,25,0,Math.PI*2);
+ctx.arc(185,85,25,0,Math.PI*2);
+ctx.fill();
 
-// whiskers
+// 目（白）
+ctx.fillStyle = "white";
 ctx.beginPath();
-ctx.moveTo(100,180);
-ctx.lineTo(200,180);
-ctx.stroke();
+ctx.arc(120,150,10,0,Math.PI*2);
+ctx.arc(160,150,10,0,Math.PI*2);
+ctx.fill();
 
+// 目（黒）
+ctx.fillStyle = "black";
+ctx.beginPath();
+ctx.arc(120,150,5,0,Math.PI*2);
+ctx.arc(160,150,5,0,Math.PI*2);
+ctx.fill();
+
+// 口
+ctx.beginPath();
+ctx.arc(140,175,15,0,Math.PI);
+ctx.stroke();
 }
 
-else if(type === "dog"){
+// =====================
+// 🐶 イヌ
+// =====================
+function drawDog(){
+clear();
 
+// 顔
 ctx.beginPath();
-ctx.arc(140,150,40,0,Math.PI*2);
-ctx.stroke();
+ctx.arc(140,150,75,0,Math.PI*2);
+ctx.fill();
 
+// 耳（垂れ）
 ctx.beginPath();
-ctx.moveTo(180,180);
-ctx.quadraticCurveTo(220,200,210,250);
-ctx.stroke();
+ctx.ellipse(85,120,20,40,0,0,Math.PI*2);
+ctx.ellipse(195,120,20,40,0,0,Math.PI*2);
+ctx.fill();
 
+// 鼻
+ctx.beginPath();
+ctx.arc(140,165,12,0,Math.PI*2);
+ctx.fill();
 }
 
-else if(type === "elephant"){
+// =====================
+// 🐘 ゾウ
+// =====================
+function drawElephant(){
+clear();
 
+// 頭
 ctx.beginPath();
-ctx.arc(100,120,25,0,Math.PI*2);
-ctx.arc(180,120,25,0,Math.PI*2);
-ctx.stroke();
+ctx.arc(140,140,80,0,Math.PI*2);
+ctx.fill();
 
+// 耳
 ctx.beginPath();
-ctx.moveTo(140,120);
-ctx.lineTo(140,250);
-ctx.stroke();
+ctx.arc(80,140,40,0,Math.PI*2);
+ctx.arc(200,140,40,0,Math.PI*2);
+ctx.fill();
 
+// 鼻
+ctx.beginPath();
+ctx.moveTo(140,140);
+ctx.quadraticCurveTo(170,200,150,270);
+ctx.stroke();
 }
 
-else if(type === "fire"){
+// =====================
+// 🚒 消防車
+// =====================
+function drawFire(){
+clear();
 
+// 車体
+ctx.fillRect(70,140,140,60);
+
+// タイヤ
 ctx.beginPath();
-ctx.moveTo(100,200);
-ctx.quadraticCurveTo(140,80,180,200);
-ctx.stroke();
+ctx.arc(100,210,15,0,Math.PI*2);
+ctx.arc(180,210,15,0,Math.PI*2);
+ctx.fill();
 
-ctx.beginPath();
-ctx.moveTo(120,200);
-ctx.lineTo(200,250);
-ctx.stroke();
-
+// 上部ライト
+ctx.fillRect(90,120,100,20);
 }
-
-else{
-
-ctx.beginPath();
-ctx.moveTo(80,160);
-ctx.quadraticCurveTo(140,60,200,160);
-ctx.stroke();
-
-}
-
-info.textContent = type;
-}
-
-btn.onclick = () => {
-const t = input.value;
-if(!t) return;
-draw(detect(t));
-};
-
-input.addEventListener("keydown",(e)=>{
-if(e.key==="Enter") btn.click();
-});
 
 </script>
 
