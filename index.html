@@ -23,8 +23,6 @@ max-width:420px;
 border-radius:16px;
 }
 
-h1{margin-top:0;}
-
 input{
 width:100%;
 padding:14px;
@@ -39,18 +37,15 @@ border:none;
 background:#111;
 color:#fff;
 font-size:16px;
-cursor:pointer;
 }
 
-#canvas{
+canvas{
 margin-top:20px;
-display:flex;
-justify-content:center;
-}
-
-svg{
-width:280px;
-height:280px;
+display:block;
+margin-left:auto;
+margin-right:auto;
+background:white;
+border-radius:12px;
 }
 
 .info{
@@ -64,139 +59,129 @@ color:#666;
 <body>
 
 <div class="card">
+
 <h1>かんたん絵</h1>
-<p>ことば → かたち</p>
 
 <input id="input" placeholder="ネコ、犬、ゾウ、消防士">
 
 <button id="btn">描く</button>
 
 <div id="info" class="info"></div>
-<div id="canvas"></div>
+
+<canvas id="c" width="280" height="280"></canvas>
+
 </div>
 
 <script>
 
 const input = document.getElementById("input");
 const btn = document.getElementById("btn");
-const canvas = document.getElementById("canvas");
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
 const info = document.getElementById("info");
 
-
-// 🧠 入力ゆるく受ける（ここが超重要）
-function normalizeText(text){
-return text
-.normalize("NFKC")
-.replace(/[\s　]+/g,"")   // スペース全削除
-.replace(/[、,]/g,"");    // 読点削除
+function normalize(t){
+return t.normalize("NFKC").replace(/[\s　]+/g,"");
 }
 
-
-// 🧠 判定
 function extract(text){
 
-const t = normalizeText(text);
+const t = normalize(text);
 
-console.log("INPUT:", text);
-console.log("CLEAN:", t);
+if(/ネコ|猫|ねこ/.test(t)) return "cat";
+if(/犬|いぬ/.test(t)) return "dog";
+if(/ゾウ|象/.test(t)) return "elephant";
+if(/消防/.test(t)) return "fire";
 
-if(/ネコ|猫|ねこ/.test(t)){
-return ["ear","whisker"];
+return "symbol";
 }
 
-if(/犬|いぬ/.test(t)){
-return ["ear","tail"];
+function draw(type){
+
+ctx.clearRect(0,0,280,280);
+ctx.lineWidth = 6;
+ctx.lineCap = "round";
+ctx.strokeStyle = "black";
+
+if(type === "cat"){
+// ears
+ctx.beginPath();
+ctx.moveTo(80,140);
+ctx.lineTo(110,80);
+ctx.lineTo(140,140);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(140,140);
+ctx.lineTo(170,80);
+ctx.lineTo(200,140);
+ctx.stroke();
+
+// whisker
+ctx.beginPath();
+ctx.moveTo(100,170);
+ctx.lineTo(200,170);
+ctx.stroke();
 }
 
-if(/ゾウ|象/.test(t)){
-return ["ear","trunk"];
+else if(type === "dog"){
+ctx.beginPath();
+ctx.arc(140,150,40,0,Math.PI*2);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(180,180);
+ctx.quadraticCurveTo(220,200,200,250);
+ctx.stroke();
 }
 
-if(/消防/.test(t)){
-return ["helmet","hose"];
+else if(type === "elephant"){
+ctx.beginPath();
+ctx.arc(100,120,25,0,Math.PI*2);
+ctx.arc(180,120,25,0,Math.PI*2);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(140,120);
+ctx.lineTo(140,240);
+ctx.stroke();
 }
 
-return ["symbol"];
+else if(type === "fire"){
+ctx.beginPath();
+ctx.moveTo(100,180);
+ctx.quadraticCurveTo(140,80,180,180);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(120,180);
+ctx.lineTo(200,250);
+ctx.stroke();
 }
 
-
-// 🎨 描画
-function render(features){
-
-let out = [];
-
-if(features.includes("ear")){
-out.push(`
-<circle cx="80" cy="120" r="20"/>
-<circle cx="200" cy="120" r="20"/>
-`);
+else{
+// symbol
+ctx.beginPath();
+ctx.moveTo(80,160);
+ctx.quadraticCurveTo(140,80,200,160);
+ctx.stroke();
 }
 
-if(features.includes("whisker")){
-out.push(`
-<line x1="90" y1="160" x2="140" y2="160"/>
-<line x1="160" y1="160" x2="210" y2="160"/>
-`);
+info.textContent = type;
 }
 
-if(features.includes("tail")){
-out.push(`
-<path d="M200 180 Q240 180 220 240"/>
-`);
-}
-
-if(features.includes("trunk")){
-out.push(`
-<path d="M140 120 Q140 200 140 250"/>
-`);
-}
-
-if(features.includes("helmet")){
-out.push(`
-<path d="M80 120 Q140 60 200 120"/>
-`);
-}
-
-if(features.includes("hose")){
-out.push(`
-<path d="M120 180 Q200 180 220 240"/>
-`);
-}
-
-if(features.includes("symbol")){
-out.push(`
-<path d="M80 160 Q140 80 200 160"/>
-`);
-}
-
-return `
-<svg viewBox="0 0 280 280"
-fill="none"
-stroke="black"
-stroke-width="6"
-stroke-linecap="round">
-${out.join("")}
-</svg>
-`;
-}
-
-
-// 🚀 実行
 btn.addEventListener("click", ()=>{
 
 const text = input.value;
 if(!text) return;
 
-const features = extract(text);
-
-info.textContent = features.join(" ・ ");
-
-canvas.innerHTML = render(features);
+const type = extract(text);
+draw(type);
 
 });
 
 input.addEventListener("keydown",(e)=>{
-if(e.key === "Enter") btn.click();
+if(e.key==="Enter") btn.click();
 });
 
 </script>
