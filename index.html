@@ -7,7 +7,6 @@
 <title>かんたん絵</title>
 
 <style>
-
 body{
 margin:0;
 padding:24px;
@@ -56,7 +55,6 @@ margin-top:12px;
 color:#666;
 text-align:center;
 }
-
 </style>
 
 </head>
@@ -66,275 +64,115 @@ text-align:center;
 <div class="card">
 
 <h1>かんたん絵</h1>
-
 <p>特徴だけ残す</p>
 
-<input
-id="subject"
-placeholder="ネコ、消防士、ゾウ">
+<input id="subject" placeholder="ネコ、消防士、ゾウ">
 
-<button id="generate">
+<button id="generate">描く</button>
 
-描く
+<div class="info" id="info"></div>
 
-</button>
-
-<div
-class="info"
-id="info">
-</div>
-
-<div
-id="canvas">
-</div>
+<div id="canvas"></div>
 
 </div>
 
 <script>
 
-const input=
-document.getElementById(
-"subject"
-);
-
-const button=
-document.getElementById(
-"generate"
-);
-
-const canvas=
-document.getElementById(
-"canvas"
-);
-
-const info=
-document.getElementById(
-"info"
-);
+const input = document.getElementById("subject");
+const button = document.getElementById("generate");
+const canvas = document.getElementById("canvas");
+const info = document.getElementById("info");
 
 function extract(word){
 
-if(
-/ネコ|猫/.test(word)
-){
-
-return[
-"ears",
-"whiskers"
-];
-
+if(/ネコ|猫/.test(word)){
+return ["ears","whiskers"];
 }
 
-if(
-/犬/.test(word)
-){
-
-return[
-"ears",
-"tail"
-];
-
+if(/犬/.test(word)){
+return ["ears","tail"];
 }
 
-if(
-/ゾウ/.test(word)
-){
-
-return[
-"ear",
-"trunk"
-];
-
+if(/ゾウ/.test(word)){
+return ["ear","trunk"];
 }
 
-if(
-/消防/.test(word)
-){
-
-return[
-"helmet",
-"hose"
-];
-
+if(/消防/.test(word)){
+return ["helmet","hose"];
 }
 
-return[
-"symbol"
-];
-
+return ["symbol"];
 }
 
 function render(features){
 
-let out=[];
+const out = [];
 
-if(
-features.includes(
-"ears"
-)
-){
-
-out.push(
-`<path d="M90 120 L120 70 L140 120"/>`
-);
-
-out.push(
-`<path d="M140 120 L170 70 L190 120"/>`
-);
-
+if(features.includes("ears")){
+out.push(`<path d="M90 120 L120 70 L140 120"/>`);
+out.push(`<path d="M140 120 L170 70 L190 120"/>`);
 }
 
-if(
-features.includes(
-"whiskers"
-)
-){
-
-out.push(
-`<line x1="70" y1="160" x2="120" y2="160"/>`
-);
-
-out.push(
-`<line x1="160" y1="160" x2="210" y2="160"/>`
-);
-
+if(features.includes("whiskers")){
+out.push(`<line x1="70" y1="160" x2="120" y2="160"/>`);
+out.push(`<line x1="160" y1="160" x2="210" y2="160"/>`);
 }
 
-if(
-features.includes(
-"tail"
-)
-){
-
-out.push(
-`<path d="M180 170 Q230 170 210 230"/>`
-);
-
+if(features.includes("tail")){
+out.push(`<path d="M180 170 Q230 170 210 230"/>`);
 }
 
-if(
-features.includes(
-"ear"
-)
-){
-
-out.push(
-`<circle cx="90" cy="140" r="18"/>`
-);
-
-out.push(
-`<circle cx="190" cy="140" r="18"/>`
-);
-
+if(features.includes("ear")){
+out.push(`<circle cx="90" cy="140" r="18"/>`);
+out.push(`<circle cx="190" cy="140" r="18"/>`);
 }
 
-if(
-features.includes(
-"trunk"
-)
-){
-
-out.push(
-`<line x1="140" y1="100" x2="140" y2="240"/>`
-);
-
+if(features.includes("trunk")){
+out.push(`<line x1="140" y1="100" x2="140" y2="240"/>`);
 }
 
-if(
-features.includes(
-"helmet"
-)
-){
-
-out.push(
-`<path d="M90 120 Q140 70 190 120"/>`
-);
-
+if(features.includes("helmet")){
+out.push(`<path d="M90 120 Q140 70 190 120"/>`);
 }
 
-if(
-features.includes(
-"hose"
-)
-){
-
-out.push(
-`<path d="M120 170 Q220 170 220 230"/>`
-);
-
+if(features.includes("hose")){
+out.push(`<path d="M120 170 Q220 170 220 230"/>`);
 }
 
-if(
-features.includes(
-"symbol"
-)
-){
-
-out.push(
-`<path d="M90 140 Q140 80 190 140"/>`
-);
-
+if(features.includes("symbol")){
+out.push(`<path d="M90 140 Q140 80 190 140"/>`);
 }
 
 return `
-
-<svg
-viewBox="0 0 280 280"
-fill="none"
-stroke="black"
-stroke-width="8"
-stroke-linecap="round">
-
+<svg viewBox="0 0 280 280" fill="none" stroke="black" stroke-width="8" stroke-linecap="round">
 ${out.join("")}
-
 </svg>
-
 `;
-
 }
 
-button.addEventListener(
+button.addEventListener("click", () => {
 
-"click",
+const text = input.value.trim();
 
-()=>{
-
-const text=
-
-input.value.trim();
-
-if(
-!text
-){
-
+if(!text){
 return;
-
 }
 
-const features=
+const features = extract(text);
 
-extract(
-text
-);
+info.textContent = features.join(" ・ ");
 
-info.textContent=
+canvas.innerHTML = render(features);
 
-features.join(
-" ・ "
-);
+});
 
-canvas.innerHTML=
-
-render(
-features
-);
-
+input.addEventListener("keydown", (e) => {
+if(e.key === "Enter"){
+button.click();
 }
-
-);
+});
 
 </script>
 
 </body>
-
 </html>
